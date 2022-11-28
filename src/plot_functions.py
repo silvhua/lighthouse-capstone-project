@@ -181,3 +181,112 @@ def data_viz(df_fw, df_sm):
 
     ax[0,0].legend()
     return fig
+
+def compare_models(fw_predictions, sm_predictions, title='Model predictions', 
+    context='talk', annotate=True, ymin=-1.5, ymax=5):
+    """2022-11-27 23:00
+
+    Plot predictions from all the models for each of the free weight and smith machine data sets.
+        Parmaters:
+            - fw_predictions, sm_predictions (DataFrame): 
+                Dataframes that each contain target data ('Measured' column) and model predictions
+                (1 column per model).
+            - title (str): Overall plot title.
+            - context (None or str): Seaborn .set_theme() parameter. 
+                One of {paper, notebook, talk (default), poster}. If None, set to 'default (notebook)'.
+            - annotate (bool): Whether or not to annotate the bar graph with values. Default is True.
+        Returns:
+            - figure with scatter plots of measured vs. predicted values for all models.
+            - figure with bar charts of mean absolute error and mean error for all models.
+            - DataFrames for each of the free weight and smith machine data sets containing:
+                mean absolute error and mean error for all models.
+
+    Command syntax:
+        scatterplot, error_plot, fw_metrics, sm_metrics = compare_models(fw_predictions, 
+        sm_predictions, title='Model predictions', context='talk')
+
+        scatterplot.savefig('../output/figures/Measured vs predicted for all samples.png')
+        error_plot.savefig('../output/figures/Error bar chart for all samples.png')
+        path = r'../output/predictions'
+        save_csv(fw_metrics, 'free weight errors', path=path)
+        save_csv(sm_metrics, 'smith machine errors', path=path)
+    """
+    fw_models = fw_predictions.columns[1:].to_list()
+    sns.reset_defaults()    
+    %matplotlib inline
+    font_scale=.8 if context=='talk' else 1
+    rc={'lines.markersize': 6} if context=='talk' else None
+    sns.set_theme(context=context, style='ticks', font_scale=font_scale, 
+        rc=rc)
+    ncols = len(fw_models)
+    fig, ax = plt.subplots(nrows=2, ncols=ncols, figsize=(3*ncols, 2*3))
+    fig2, ax2 = plt.subplots(nrows=1, ncols=2, figsize=(3*ncols, 5))
+    fw_error = pd.DataFrame()
+    sm_error = pd.DataFrame()
+    for index, model in enumerate(fw_models):
+        # Calculate error
+        fw_error[model] = fw_predictions[model] - fw_predictions['Measured'] 
+        sm_error[model] = sm_predictions[model] - sm_predictions['Measured'] 
+
+        # Plot measured vs. predicted values for each model
+        ax[0, index].axline(xy1=(150, 150), slope=1, alpha=0.8, linewidth=0.5, color='orange')
+        if index == 0:
+            ax[0, index].set_ylabel('Predicted') 
+        sns.scatterplot(data=fw_predictions, x='Measured', y=model, ax=ax[0, index],
+            alpha=0.5, marker='o', legend=(True if index==0 else False), label='FW',
+        ).set(xlabel=None, ylabel=None)
+        ax[0, index].set_title(model)
+        if index == 0:
+            ax[0, index].set_ylabel('Predicted') 
+
+        ax[1, index].axline(xy1=(150, 150), slope=1, alpha=0.8, linewidth=0.5, color='orange')
+        sns.scatterplot(data=sm_predictions, x='Measured', y=model, ax=ax[1, index],
+            alpha=0.5, marker='s', legend=(True if index==0 else False), 
+            label='SM', color='slateblue',
+        ).set(ylabel=None)
+        if index == 0:
+            ax[1, index].set_ylabel('Predicted')   
+        
+    fig.suptitle(title)
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
+    fig2.tight_layout(rect=[0, 0, 1, 0.9])
+
+    # Calculate remaining evaluation metrics and reshape dataframe for plotting
+    fw_error['Metric'] = 'Error'
+    fw_mae = abs(fw_error.iloc[:,:-1])
+    fw_mae['Metric'] = 'MAE'
+    fw_metrics = pd.concat([fw_error, fw_mae], axis=0).melt(
+        value_vars=fw_models, id_vars=['Metric'], var_name='model')
+    print(f'Metrics dataframe shape (free weight data): {fw_metrics.shape}')
+
+    sm_error['Metric'] = 'Error'
+    sm_mae = abs(fw_error.iloc[:,:-1])
+    sm_mae['Metric'] = 'MAE'
+    sm_metrics = pd.concat([sm_error, sm_mae], axis=0).melt(
+        value_vars=fw_models, id_vars=['Metric'], var_name='model')
+    print(f'Metrics dataframe shape (Smith machine data): {sm_metrics.shape}')
+    
+    # Plot evaluation metrics: 
+    sns.barplot(data=fw_metrics, y='value', x='model', hue='Metric', 
+        errorbar=('se', 1.96), # error bars set to 95% confidence interval, or 1.96*standard error
+        ax=ax2[0]).set_ylim([ymin, ymax])
+    ax2[0].axhline(y=0, ls=':', color='grey')
+    ax2[0].set(ylabel='kg', xlabel=None)
+    ax2[0].set_title('Free weight')
+    sns.barplot(data=sm_metrics, y='value', x='model', hue='Metric', 
+        errorbar=('se', 1.96),
+        ax=ax2[1]).set_ylim([ymin, ymax])    
+    ax2[1].axhline(y=0, ls=':', color='grey')
+
+    # Label bars with value
+    if annotate:
+        for i in ax2[0].containers:
+                ax2[0].bar_label(i, fmt='%.1f', label_type='center') 
+        for i in ax2[1].containers:
+                ax2[1].bar_label(i, fmt='%.1f', label_type='center') 
+    # Titles and axis labels
+    ax2[1].set(ylabel='kg', xlabel=None)
+    ax2[0].set_title('Free weight')
+    ax2[1].set_title('Smith machine')
+    fig2.suptitle('Model evaluation metrics')
+    return fig, fig2, fw_metrics, sm_metrics
