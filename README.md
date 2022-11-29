@@ -219,8 +219,8 @@ Machine learning linear regressions allow athletes to predict 1RM using submaxim
 
 Model | FW Squat | SM Squat
 --- | ---- | ---
-OLS | $ a\times LV_{slope} + b \times LV_{intercept} $ | $ a\times LV_{slope} + b \times LV_{intercept} $
-Lasso | $ a\times LV_{slope} + b \times LV_{intercept} $ | $ a\times LV_{slope} + b \times LV_{intercept} $
+OLS | a × LV_{slope} + b × LV_{intercept} | a × LV_{slope} + b × LV_{intercept} 
+Lasso | a × LV_{slope} + b × LV_{intercept} | a × LV_{slope} + b × LV_{intercept}
 
 Given errors of these models, an athlete who wants to be conservative can subtract 2-3 kg (or more) from the estimated 1RM value.
 
@@ -231,3 +231,5 @@ Another limitation of the data is that the results will likely be different for 
 
 # Future Goals
 The current project determined the LV slope using loads at 40, 60, 80, 90, and 100%. Given that the ML models used in this project only required the LV slope and LV intercept, this can theoretically be calculated using two data points per participant. The next iteration will determine which two loads will provide most accurate LV regressions for predicting 1RM. It is hypothesized that using moderate to heavy loads will provide the best estimates, since there will be less variability in the concentric velocity (as indicated in Figure 1, where there is greater variability in the data at lighter loads).
+
+Once the final model has been selected, the model will be deployed to a web app where anyone can enter their mean concentric velocity and load for two data points, and the model provides a 1RM estimate.
