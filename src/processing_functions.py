@@ -63,7 +63,7 @@ def individual_regression(df):
     df_lr = df.transpose().apply(lambda x:linear_regression(x)).transpose()
     
     df_lr['group MVT'] =  df_lr['100%MV'].mean()
-    print('Dataframe shape: ', df_lr.transpose().shape)
+    print('Dataframe shape: ', df_lr.shape)
     return df_lr
 
 def sorted_test_split(df_fw, df_sm):
