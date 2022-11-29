@@ -87,8 +87,8 @@ def plot_profiles_lr(df, y='absolute load', x='mean velocity', row='participant'
         title='Load-Velocity Profiles', show_legend=True)
     """
     
-    sns.reset_defaults()    
-    %matplotlib inline
+    # sns.reset_defaults()    
+    # %matplotlib inline
     participants = sorted(df[row].unique())
     subplot_label = [x+1 for x in range(-1,100)]
     nrows = round((len(participants)+1)/4)
@@ -153,8 +153,8 @@ def data_viz(df_fw, df_sm):
     Syntax: 
     data_viz_fig = data_viz(df_fw, df_sm)
     """
-    sns.reset_defaults()    
-    %matplotlib inline
+    # sns.reset_defaults()    
+    # %matplotlib inline
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(10,7))
     xmin = pd.concat([df_fw['100%MV'],df_sm['100%MV']], axis=0).min()
     xmax = pd.concat([df_fw['20% MV'],df_sm['20% MV']], axis=0).max()
@@ -212,8 +212,8 @@ def compare_models(fw_predictions, sm_predictions, title='Model predictions',
         save_csv(sm_metrics, 'smith machine errors', path=path)
     """
     fw_models = fw_predictions.columns[1:].to_list()
-    sns.reset_defaults()    
-    %matplotlib inline
+    # sns.reset_defaults()    
+    # %matplotlib inline
     font_scale=.8 if context=='talk' else 1
     rc={'lines.markersize': 6} if context=='talk' else None
     sns.set_theme(context=context, style='ticks', font_scale=font_scale, 
