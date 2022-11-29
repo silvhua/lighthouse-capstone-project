@@ -1,3 +1,5 @@
+import pandas as pd
+from sklearn.linear_model import LinearRegression
 import re
 
 def linear_regression(df):
@@ -78,7 +80,7 @@ def sorted_test_split(df_fw, df_sm):
         Syntax:
         fw_train, fw_test, sm_train, sm_test = sorted_test_split(df_fw, df_sm)
     """
-    test_sorted_df_implicit_index = [i for i in range(3,len(df_sm2),5)]
+    test_sorted_df_implicit_index = [i for i in range(3,len(df_sm),5)]
     print(f'Original df shapes: {df_fw.shape}, {df_sm.shape}')
     fw_test = df_fw.sort_values('Load-1RM-1').iloc[test_sorted_df_implicit_index, :]
     test_exp_index = fw_test.index
@@ -94,3 +96,24 @@ def sorted_test_split(df_fw, df_sm):
     print(f'Test shapes: {fw_test.shape}, {sm_test.shape}')
     return fw_train, fw_test, sm_train, sm_test
 
+def create_pairs(sortable_list):
+    """
+    Create all unique pair combinations of 2 elements from a list (exclude pairs where
+    the elements are identical)
+
+    Parameters:
+        - list (list): List of numbers or strings (or other elements that can be passed into
+            the sorted() function).
+    Returns:
+        List of pair combinations.
+    """
+    from itertools import product
+    pairs = list(product(sortable_list, sortable_list))
+    pairs = [set(sorted([pair[0], pair[1]])) for pair in pairs if pair[0] != pair[1]]
+    unique_pairs = []
+    for item in pairs:
+        if item not in unique_pairs:
+            unique_pairs.append(item)
+    unique_pairs = [sorted(list(pair)) for pair in unique_pairs]
+    print(f'Number of unique pairs: {len(unique_pairs)}')
+    return unique_pairs
