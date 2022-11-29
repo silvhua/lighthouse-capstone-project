@@ -6,7 +6,7 @@ Maximal strength is measured using the maximum weight that one can use for a giv
 
 Testing one's 1RM, which involves progressively increasing weight on a given exercise until reaching the point of failure, is inherently fatiguing and higher risk, particularly for an exercise such as the barbell squat. Additionally, achieving one's true 1RM on a given day is contingent on having optimal conditions such as low fatigue and the right psychological conditions. Whereas strength athletes test 1RM only a few times per year, often with a period of lower training volume in the preceding weeks to allow fatigue to dissipate for full expression of strength, submaximal testing can be performed frequently. 
 
-For the reasons outlined above, competitive athletes and exercisers benefit from estimating their maximal strength (as indicated by 1RM) using submaximal loads (e.g. 80%). Athletes and exercisers use weight lifted to evaluate strength as it is is an objective indicator of how much force the body is exerting. **Concentric velocity** (i.e. movement speed when lifting the weight) is an additional objective indicator of force: Being able to move the same weight at a faster speed means that more force is being applied. Athletes who track their concentric velocities during testing with 1RM and submaximal loads can then create a **load-velocity profile** (see figure 1 below) using statistical linear regression to then estimate 1RM in the future using:
+For the reasons outlined above, competitive athletes and exercisers benefit from estimating their maximal strength (as indicated by 1RM) using submaximal loads (e.g. 80%). Athletes and exercisers use weight lifted to evaluate strength as it is an objective indicator of how much force the body exerts. **Concentric velocity** (i.e. movement speed when lifting the weight) is an additional objective indicator of force: Being able to move the same weight at a faster speed means that more force is being applied. Athletes who track their concentric velocities during testing with 1RM and submaximal loads can then create a **load-velocity profile** (see figure 1 below) using statistical linear regression to then estimate 1RM in the future using:
 * Slope of the load-volocity profile (**LV slope**).
 * Intercept of the load-velocity profile (**LV intercept**).
 * Estimated or previously-measured velocity at 100% of the 1RM, known as the **minimum velocity threshold (MVT)**
@@ -58,7 +58,7 @@ A limitation of the data is that the variables are not normally distributed. It 
 
 
 
-# Process
+# Iteration 1
 This project was performed using Python in VSCode with the Jupyter Notebook extension. Modules and packages include Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn, and Keras/Tensorflow. 
 
 
@@ -173,8 +173,8 @@ model.compile(
 ```
 The model was trained using the train sample and validated using the test sample (train-test split described in the previous section).
 
-# Results
-## Models 1-4
+## Results
+### Models 1-4
 The 1RM predictions are plotted against the measured 1RM values in this along with the equality line:
 ![predicted vs measured values](./output/figures/Measured%20vs%20predicted%20for%20all%20samples.png)
 
@@ -204,7 +204,7 @@ Based on the error values (blue bars), the statistical models (`Stat ind MVT` an
 
 Based on mean absolute error (MAE; red bars), ML models performed slightly better than the statistical models (error of 2.0-3.4 kg vs. 3.0-4.4 kg).
 
-## Neural Network (Model 5)
+### Neural Network (Model 5)
 
 The neural network was trained using the Adam algorithm (a stochastic gradient descent method) to minimize mean absolute error and to stop once this loss metric stopped improving after 50 epochs. Below are the results of this model:
 
@@ -213,9 +213,65 @@ The neural network was trained using the Adam algorithm (a stochastic gradient d
 
 Given that all predictions were almost the same value, this model's predictions are not of practical use.
 
+# Iteration 2
+Given that the ML models used in this project only required the LV slope and LV intercept, this can theoretically be calculated using two data points per participant. This iteration focused on FW squats, which are more commonly performed than SM squats. This time, instead of determining LV slope and LV intercept based on the entire range of %1RM available, these were determined on a subset of the loads (e.g. 40% and 60% 1RM).
+
+The aims of this iteration are
+1. To determine which two loads would provide the LV slope and LV intercepts leading to the 1RM predictions with the least error. 
+2. Whether prediction error is affected by the number of data points used for estimating an individual's LV slope and LV intercept
+
+It is hypothesized that:
+1. Using moderate to heavy loads will provide the best estimates, since there will be less variability in the concentric velocity (as indicated in Figure 1, where there is greater variability in the data at lighter loads).
+2. If the appropriate two loads are selected, using more data points to calculate LV slope and LV intercept won't meaningfully improve 1RM prediction.
+
+## Process
+Each individual's LV slope and LV intercept were calculated using each of the following subsets of %1RM loads:
+* 20% and 60%
+* 20% and 80%
+* 20% and 90%
+* 40% and 60%
+* 40% and 80%
+* 60% and 80%
+* 60% and 90%
+* 80% and 90%
+* 40%, 60, and 80%
+* 40%, 60, 80, and 90%
+
+Each set of LV slopes and LV intercepts were then used as features to fit OLS linear regression models.
+
+## Results
+As hypothesized, predictions had lowest error when at least one of the loads used to calculate LV slope and LV intercept was 80% of 1RM or higher: Error was 6.4-6.8 kg when all loads were < 80% 1RM vs. 2.9-3.5 kg when at least one of the loads was 80% or higher. The magnitude of the other load (e.g. 20% vs. 60%) had no meaningful impact. Additonally, as long as LV slope and LV intercept were calculated with one of the weights being ~80+ or more, using more than two data points did not meaningfully improve model predictions (error for the `LV 40-60-80-90` model was 2.8 kg vs. 2.9 kg for `LV 40-80`).
+
+
+<img src="./output/figures/02%20iteration%20measured%20vs%20predicted%20for%20all%20samples%20SELECT%20MODELS.png" width=600>
+
+<img src="./output/figures/02%20iteration%20error%20bar%20chart%20for%20all%20samples%20SELECT%20MODELS.png" width=600>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Conclusions
-Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. The follow regression equations can be used to estimate 1RM using these models *[coefficients `a` and `b` to be filled in later]*:
+Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  The follow regression equations can be used to estimate 1RM using these models *[coefficients `a` and `b` to be filled in later]*:
 
 Model | FW Squat | SM Squat
 --- | ---- | ---
@@ -230,6 +286,6 @@ The nature of most exercise science research is that it is challenging to recrui
 Another limitation of the data is that the results will likely be different for individuals who are not similar to the population in this study: males ages 18-26 (21.7 ± 2.0 years) with a mean 1RM FW squat of 136.3 ± 27.0 kg.
 
 # Future Goals
-The current project determined the LV slope using loads at 40, 60, 80, 90, and 100%. Given that the ML models used in this project only required the LV slope and LV intercept, this can theoretically be calculated using two data points per participant. The next iteration will determine which two loads will provide most accurate LV regressions for predicting 1RM. It is hypothesized that using moderate to heavy loads will provide the best estimates, since there will be less variability in the concentric velocity (as indicated in Figure 1, where there is greater variability in the data at lighter loads).
-
 Once the final model has been selected, the model will be deployed to a web app where anyone can enter their mean concentric velocity and load for two data points, and the model provides a 1RM estimate.
+
+Model accuracy would likely improve if accounting for other features of the participants, such as sex, experience level with the exercise, and anthropometrics. Additional research would be required to develop models for using LV profiles to predict 1RM strength for other exercises.
