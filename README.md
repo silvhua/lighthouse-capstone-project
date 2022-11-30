@@ -22,9 +22,27 @@ This project is based on a previous study by [Balsalobre-Fernández and Kipp (20
 * Linear regression machine learning (ML) models will allow for 1RM estimation with a lesser likelihood of overestimation than statistical machine learning models
 
 # Exploratory Data Analysis
+## The Data Set
+Data for this project were provided by Dr. Carlos Balsalobre-Fernández from Universidad Autónoma de Madrid. Data were collected by *[name of authors who performed the experiments]* with 52 participants who each performed the FW squat and SM squat at various loads. Participants were instructed to perform 1-2 repetitions with their maximal intended velocity. There were 2 data sets (1 for each of the FW squat and SM squat), each with 52 rows (1 per participant). The columns are as follows:
+* `Participant ID`
+* `Age`
+* `Mass`
+* `Height`
+* `Load20%1RM` (weight in kg)
+* `Load40%1RM`
+* `Load60%1RM`
+* `Load80%1RM`
+* `Load90%1RM`
+* `Load-1RM-1` (target variable)
+* `20% MV` (`MV` = mean concentric velocity, in m/s)
+* `40%MV`
+* `60%MV`
+* `80%MV`
+* `90%MV`
+* `100%MV`
 
-Data for this project were provided by Dr. Carlos Balsalobre-Fernández from Universidad Autónoma de Madrid. Data were collected by *[name of authors who performed the experiments]* with 52 participants who each performed the FW squat and SM squat at various loads. Participants were instructed to perform 1-2 repetitions with their maximal intended velocity.
-
+## Data Visualization
+### Original Features
 Load-velocity profiles for all subjects are shown in this figure:
 ![visualization of all LV profiles](./output/figures/data_viz.png)
 
@@ -44,7 +62,7 @@ Univariate distributions and bivariate correlations of the features used for mod
 
 
 
-
+### Engineered Features
 #### FW squat
 
 <img src="./output/figures/pairplot_fw.png" width=400>
@@ -53,7 +71,8 @@ Univariate distributions and bivariate correlations of the features used for mod
 
 <img src="./output/figures/pairplot_sm.png" width=400>
 
-A limitation of the data is that the variables are not normally distributed. It is likely that with a larger sample size, the data would have a normal distribution. I decided not to transform the data to to reduce skewness because it would make the results of the models less practical to apply for athletes and coaches. 
+Limitations of the data:
+* The variables are not normally distributed. It is likely that with a larger sample size, the data would have a normal distribution. I decided not to transform the data to to reduce skewness because it would make the results of the models less practical to apply for athletes and coaches. 
 
 
 
@@ -249,12 +268,31 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 
 Select models were evaluated with the coefficient of determination (r^2) and mean absolute error (MAE) using 10-fold cross-validation. As expected, MAE values determined through cross-validation were higher, but not to a meaningful amount. Results are as follows:
 
-Model | r^2 | MAE
---- | ---- | ---
-LV 20-80 | 0.969 | 3.347
-LV 80-90 | 0.965 | 3.068
-LV 60-80 | 0.973 | 3.177
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+. | LV 20-60 | LV 20-80 | LV 20-90 | LV 40-60 | LV 40-80 | LV 60-80 | LV 60-90 | LV 80-90 | LV 40-60-80 | LV 40-60-80-90
+---| ---| ---|---|---|---|---|---|---|---|---|
+mae | 7.433 | 3.347 | 3.652 | 7.040 | 3.037 | 3.177 | 3.403 | 3.068 | 3.446 | 3.011
+r2 | 0.825 | 0.969 | 0.941 | 0.846 | 0.973 | 0.973 | 0.957 | 0.965 | 0.970 | 0.970
 
 
 
