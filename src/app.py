@@ -38,12 +38,15 @@ def plot_lv_profile(loads, velocities, X):
     if len(loads) > 2:
         y_pred = np.asarray(velocities) * X.loc[0, 'slope'] + X.loc[0, 'intercept']
         fig.add_trace(go.Scatter(x=velocities, 
-        # y=velocities * X.loc[0, 'slope'] + X.loc[0, 'intercept'],
         y=y_pred,
         name='Best fit line', mode='lines',
         line=dict(dash='dot', color='grey'), opacity=0.5,
         ))
-    fig.add_trace(go.Scatter(x=velocities, y=loads,
+    # Sort that data so that it will be plotted in sequence
+    data = pd.DataFrame([loads, velocities], 
+        index=['loads', 'velocities']).transpose().sort_values('velocities')
+
+    fig.add_trace(go.Scatter(x=data['velocities'], y=data['loads'],
         mode='lines+markers', name='Entered data',
         ))
     fig.update_layout(
