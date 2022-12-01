@@ -9,17 +9,8 @@ st.title('1RM estimator')
 st.write(f'Use your load velocity profile to estimate your back squat 1RM')
 
 def app_linear_regression(loads, velocities):
-    """2022-11-28 18:22
+    """2022-11-30 19:00
     Calculate slope and intercept using linear regression, where X = load, y = velocity.
-    Function called by other functions: individual_regression() and reshape_group_df_lr(df).
-    Can be used as a stand-alone function or when called with .apply with transposed DataFrame.
-
-    Parameters:
-        - df: DataFrame with each row containing data for an individual.
-        - loads (list): List of relative loads to be used for calculating LV slope and LV intercept.
-    Returns:
-        Dataframe with the slope and intercept for the linear regression.
-
     """
     from sklearn.linear_model import LinearRegression
     
