@@ -94,7 +94,7 @@ st.write(f'Velocities entered: {velocities}')
 if (len(loads) > 1) & (len(velocities) == len(loads)):
     X = app_linear_regression(loads, velocities)
     if len(loads) == 2:
-        model = pickle.load(open('../output/models/02 iteration model40_80.sav', 'rb'))
+        model = pickle.load(open('02 iteration model40_80.sav', 'rb'))
     elif len(loads)==3:
         model = pickle.load(open('../output/models/02 iteration model40_60_80.sav', 'rb'))
     else:
