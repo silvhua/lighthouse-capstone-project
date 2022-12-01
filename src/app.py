@@ -4,6 +4,7 @@ import numpy as np
 import pickle
 import plotly.graph_objects as go
 
+# App link: https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/
 st.title('1RM estimator')
 st.write(f'Use your load velocity profile to estimate your back squat 1RM')
 
