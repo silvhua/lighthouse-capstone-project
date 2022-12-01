@@ -92,9 +92,6 @@ st.write(f'Loads entered: {loads}')
 st.write(f'Velocities entered: {velocities}')
 
 if (len(loads) > 1) & (len(velocities) == len(loads)):
-    """
-    ## Results
-    """
     X = app_linear_regression(loads, velocities)
     if len(loads) == 2:
         model = pickle.load(open('../output/models/02 iteration model40_80.sav', 'rb'))
@@ -102,7 +99,10 @@ if (len(loads) > 1) & (len(velocities) == len(loads)):
         model = pickle.load(open('../output/models/02 iteration model40_60_80.sav', 'rb'))
     else:
         model = pickle.load(open('../output/models/02 iteration model40_60_80_90.sav', 'rb'))
-    f"**Estimated 1RM: {round(model.predict(X)[0],1)}**"
+    """
+    ## Results
+    """
+    st.subheader(f"**Estimated 1RM: {round(model.predict(X)[0],1)}**")
 
     plot_lv_profile(loads, velocities, X)
     st.write(f"Load-velocity slope: \t\t{round(X['slope'].values[0],1)}")
