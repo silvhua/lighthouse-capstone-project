@@ -265,35 +265,15 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 
 <img src="./output/figures/02%20iteration%20measured%20vs%20predicted%20for%20all%20samples%20SELECT%20MODELS.png" width=600>
 
-<img src="./output/figures/02%20iteration%20error%20bar%20chart%20for%20all%20samples%20SELECT%20MODELS.png" width=600>
+models were evaluated with the coefficient of determination (r^2) and mean absolute error (MAE) using 10-fold cross-validation. Results are as follows:
 
-Select models were evaluated with the coefficient of determination (r^2) and mean absolute error (MAE) using 10-fold cross-validation. As expected, MAE values determined through cross-validation were higher, but not to a meaningful amount. Results are as follows:
-
-
+<img src="./output/figures/02 iteration CV metrics ALL MODELS.png">
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-. | LV 20-60 | LV 20-80 | LV 20-90 | LV 40-60 | LV 40-80 | LV 60-80 | LV 60-90 | LV 80-90 | LV 40-60-80 | LV 40-60-80-90
----| ---| ---|---|---|---|---|---|---|---|---|
-mae | 7.433 | 3.347 | 3.652 | 7.040 | 3.037 | 3.177 | 3.403 | 3.068 | 3.446 | 3.011
-r^2 | 0.825 | 0.969 | 0.941 | 0.846 | 0.973 | 0.973 | 0.957 | 0.965 | 0.970 | 0.970
 
 
 
