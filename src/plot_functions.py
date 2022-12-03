@@ -342,3 +342,94 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
     ax2[1].set_title('Smith machine')
     fig2.suptitle('Model evaluation metrics')
     return fig, fig2, fw_metrics, sm_metrics
+
+def compare_models2(predictions, title='Measured 1RM vs. model predictions', 
+    context='talk', annotate=True, ymin=-1.5, ymax=10):
+    """2022-12-02 23:53 from `2022-12-02 iteration 4` notebook
+
+    Plot predictions from all the models for a dataset.
+        Parameters:
+            - predictions (DataFrame): 
+                Dataframe that contains target data ('Measured' column) and model predictions
+                (1 column per model).
+            - title (str): Overall plot title.
+            - context (None or str): Seaborn .set_theme() parameter. 
+                One of {paper, notebook, talk (default), poster}. If None, set to 'default (notebook)'.
+            - annotate (bool): Whether or not to annotate the bar graph with values. Default is True.
+        Returns:
+            - figure with scatter plots of measured vs. predicted values for all models.
+            - figure with bar charts of mean absolute error and mean error for all models.
+            - DataFrame containing:
+                mean absolute error and mean error for all models.
+
+    Command syntax:
+        scatterplot, error_plot, metrics = compare_models2(predictions, 
+        title='Model predictions', context='talk')
+
+        scatterplot.savefig('../output/figures/Measured vs predicted.png')
+        error_plot.savefig('../output/figures/Error bar chart.png')
+        path = r'../output/predictions'
+        save_csv(metrics, 'Model errors', path=path)
+    """
+    fw_models = predictions[predictions.columns[~predictions.columns.str.contains('Measured')]].columns.to_list()
+    sns.reset_defaults()    
+    %matplotlib inline
+    font_scale=.8 if context=='talk' else 1
+    rc={'lines.markersize': 6} if context=='talk' else None
+    sns.set_theme(context=context, style='ticks', font_scale=font_scale, 
+        rc=rc)
+    if (len(fw_models) == 6) | (len(fw_models) == 3):
+        ncols=3
+        nrows = round((len(fw_models)+1)//3)
+    else:
+        nrows = round((len(fw_models)+1)/4)
+        ncols=4
+    if nrows > 1:
+        fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols*3, nrows*3.2))
+    else:
+        fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols*3, nrows*3.7))
+    ax = ax.flatten()
+    fig2, ax2 = plt.subplots(nrows=1, ncols=1, figsize=(1.4*len(fw_models), 4))
+    fw_error = pd.DataFrame()
+    for index, model in enumerate(fw_models):
+        # Calculate error
+        fw_error[model] = predictions[model] - predictions['Measured'] 
+
+        # Plot measured vs. predicted values for each model
+        ax[index].axline(xy1=(150, 150), slope=1, alpha=0.8, linewidth=0.5, color='orange')
+        if index == 0:
+            ax[index].set_ylabel('Predicted') 
+        sns.scatterplot(data=predictions, x='Measured', y=model, ax=ax[index],
+            alpha=0.5, marker='o', legend=False, 
+        ).set(xlabel=None, ylabel=None)
+        ax[index].set_title(model)
+        if index % ncols == 0:
+            ax[index].set_ylabel('Predicted 1RM') 
+        if index >= len(fw_models) -ncols:
+            ax[index].set_xlabel('Measured 1RM') 
+    fig.suptitle(title)
+    fig.tight_layout(rect=[0, 0, 1, 0.98])
+    fig2.tight_layout(rect=[0, 0, 1, 0.98])
+
+    # Calculate remaining evaluation metrics and reshape dataframe for plotting
+    fw_error['Metric'] = 'Error'
+    fw_mae = abs(fw_error.iloc[:,:-1])
+    fw_mae['Metric'] = 'MAE'
+    fw_metrics = pd.concat([fw_error, fw_mae], axis=0).melt(
+        value_vars=fw_models, id_vars=['Metric'], var_name='model')
+    print(f'Metrics dataframe shape (free weight data): {fw_metrics.shape}')
+
+    # Plot evaluation metrics: 
+    sns.barplot(data=fw_metrics, y='value', x='model', hue='Metric', 
+        errorbar=('se', 1.96), # error bars set to 95% confidence interval, or 1.96*standard error
+        ax=ax2).set_ylim([ymin, ymax])
+    ax2.axhline(y=0, ls=':', color='grey')
+    ax2.set(ylabel='kg', xlabel=None)
+    
+    # Label bars with value
+    if annotate:
+        for i in ax2.containers:
+                ax2.bar_label(i, fmt='%.1f', label_type='center') 
+    # Titles and axis labels
+    fig2.suptitle('Model evaluation metrics')
+    return fig, fig2, fw_metrics
