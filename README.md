@@ -65,11 +65,11 @@ Univariate distributions and bivariate correlations of the features used for mod
 ### Engineered Features
 #### FW squat
 
-<img src="./output/figures/pairplot_fw.png" width=400>
+<img src="./output/figures/04 iteration FW pairplot.png" width=400>
 
 #### SM squat
 
-<img src="./output/figures/pairplot_sm.png" width=400>
+<img src="./output/figures/04 iteration SM pairplot.png" width=400>
 
 Limitations of the data:
 * The variables are not normally distributed. It is likely that with a larger sample size, the data would have a normal distribution. I decided not to transform the data to to reduce skewness because it would make the results of the models less practical to apply for athletes and coaches. 
@@ -94,10 +94,10 @@ The `Load80%1RM` feature used during data collection should be ~80% of the parti
 
 ## Feature Engineering
 
-For each individual and exercise, the slope  (`LV slope`) and y-intercept (`LV intercept`) of the load-velocity profile were obtained using a linear regression (Scikit-Learn's `LinearRegression` class) using loads that ranged from 40-100% of the individual's 1RM (with load as the dependent variable of the regression). *Note: I now realize I should recalculate these features using just data from the 40-80% loads if replicating the previous study).*
+For each individual and exercise, the slope  (`LV slope`) and y-intercept (`LV intercept`) of the load-velocity profile were obtained using a linear regression (Scikit-Learn's `LinearRegression` class) using loads equal to 40%, 60%, and 80% of the individual's 1RM (with load as the dependent variable of the regression). 
 
 Below are the load velocity profiles and linear regression predictions for 10 participants:
-![individual LV profiles](./output/figures/EDA%20figures/fw%20test%20set%20lv%20profiles.png)
+![individual LV profiles](./output/figures/EDA%20figures/04%20iteration%20sample%20LV%20profiles%20FW.png)
 
 
 
@@ -127,6 +127,7 @@ Below are the load velocity profiles and linear regression predictions for 10 pa
 
 ## Modelling
 
+The project aimed to find the model that would predict 1RM with the least error and with least likelihood of overestimation. Simple models were preferred to facilitate practical application by athletes and coaches.  Thus, linear regression models were selected over other regression models. 
 The first iteration of the project aimed to replicate the 5 models used in the paper by Balsalobre-Fernández and Kipp (2021):
 
 Model | Description | Model Independent Variable(s) 
@@ -137,6 +138,7 @@ Model 3 | ML multilinear regression with ordinary least squares (OLS) | LV slope
 Model 4 | ML Lasso regression | LV slope and LV intercept
 Model 5 | Neural network with 1 hidden layer of 10 nodes | LV slope and LV intercept
 
+The second iteration of the project used the ML linear regression with OLS (Model 3). 
 <br>
 
 ### Statistical Models (Models 1 & 2)
@@ -160,12 +162,11 @@ ML learning regressions were implemented using Scikit-Learn's `LinearRegression`
 
 Exercise | Alpha | CV iterations
 --- | ---- | ---
-FW squat | 1.125 | 130
-SM squat | 1.125 | 130
+FW squat | 1.11 | 72
+SM squat | 1.11 | 72
 
-With the exception of model 5, the results reported in this document are from models fit on data for all participants. This was done to provide the regression equations with the smallest errors for practical application by athletes and coaches. 
+With the exception of model 5, the results for Iteration 1 are from models fit on data for all participants. In subsequent iterations, models were evaluated using 10-fold cross validation.
 
-Not shown in this report are results from the models fit using a train-test split (42 train samples, 10 test samples). To ensure that the train and test samples had similar mean target values, participants were ordered sequentially based on 1RM load on the free weight squat. Then, every 5th participant from the sample was selected for the test group. As expected, the error of the predictions in the test sample were greater in these models, but small enough to for the models to still have practical utility.
 <br>
 
 ### Neural Network
@@ -190,12 +191,12 @@ model.compile(
     metrics=['mean_absolute_error']
 )
 ```
-The model was trained using the train sample and validated using the test sample (train-test split described in the previous section).
+The model was trained using the train sample and validated using the test sample (42 train samples, 10 test samples). To ensure that the train and test samples had similar mean target values, participants were ordered sequentially based on 1RM load on the free weight squat. Then, every 5th participant from the sample was selected for the test group. 
 
 ## Results
 ### Models 1-4
 The 1RM predictions are plotted against the measured 1RM values in this along with the equality line:
-![predicted vs measured values](./output/figures/Measured%20vs%20predicted%20for%20all%20samples.png)
+![predicted vs measured values](./output/figures/04%20Iteration%20Measured%20vs%20predicted%20for%20all%20samples.png)
 
 A few observations can be seen at first glance:
 * Predictions from all models correlate highly with measured values. 
@@ -207,7 +208,7 @@ Because the Pearson correlation coefficients (r) and coefficient of determinatio
 * Mean absolute error (MAE): $ | y_{predicted} - y_{measured} | $
 
 The graphs below display these evaluation metrics for each model and exercise:
-![evalutation metrics](./output/figures/Error%20bar%20chart%20for%20all%20samples.png)
+![evalutation metrics](./output/figures/04%20Iteration%20Error%20bar%20chart%20for%20all%20samples.png)
 
 
 
@@ -292,7 +293,7 @@ Select models were evaluated with the coefficient of determination (r^2) and mea
 . | LV 20-60 | LV 20-80 | LV 20-90 | LV 40-60 | LV 40-80 | LV 60-80 | LV 60-90 | LV 80-90 | LV 40-60-80 | LV 40-60-80-90
 ---| ---| ---|---|---|---|---|---|---|---|---|
 mae | 7.433 | 3.347 | 3.652 | 7.040 | 3.037 | 3.177 | 3.403 | 3.068 | 3.446 | 3.011
-r2 | 0.825 | 0.969 | 0.941 | 0.846 | 0.973 | 0.973 | 0.957 | 0.965 | 0.970 | 0.970
+r^2 | 0.825 | 0.969 | 0.941 | 0.846 | 0.973 | 0.973 | 0.957 | 0.965 | 0.970 | 0.970
 
 
 
@@ -324,12 +325,14 @@ Lasso | a × LV_{slope} + b × LV_{intercept} | a × LV_{slope} + b × LV_{inter
 
 Given errors of these models, an athlete who wants to be conservative can subtract 2-3 kg (or more) from the estimated 1RM value.
 
+Using these trained models, web app has been created for users who want to use their load-velocity data to predict 1RM, or simply to compute and visualize the slope and intercept of their load-velocity curve. Users can input their data for 2-4 loads, and one of the train models will provide a prediction based on LV slope and LV intercept determine from the linear regression from the entered data. The URL for the web app is https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/ 
+*[Provide details of the deployed models]*
+
 # Challenges
 The nature of most exercise science research is that it is challenging to recruit a large number of participants. After discussing with a program mentor about the poor performance of the neural network model, I decided to focus on linear regression models, as neural networks require thousands of samples to work well. At the same time, having prediction models that don't require neural networks makes their use more accessible for the population at large.
 
 Another limitation of the data is that the results will likely be different for individuals who are not similar to the population in this study: males ages 18-26 (21.7 ± 2.0 years) with a mean 1RM FW squat of 136.3 ± 27.0 kg.
 
 # Future Goals
-Once the final model has been selected, the model will be deployed to a web app where anyone can enter their mean concentric velocity and load for two data points, and the model provides a 1RM estimate.
 
 Model accuracy would likely improve if accounting for other features of the participants, such as sex, experience level with the exercise, and anthropometrics. Additional research would be required to develop models for using LV profiles to predict 1RM strength for other exercises.
