@@ -1,0 +1,9 @@
+,OLS,Lasso
+mae,4.647,4.6284
+r2,0.9483,0.9482
+t statistic,-0.0,-0.0
+ttest pvalue,1.0,1.0
+Cohens d,0.0,0.0
+LV slope,0.5847,0.5675
+LV intercept,1.262,1.2467
+model intercept,-7.6567,-7.2121

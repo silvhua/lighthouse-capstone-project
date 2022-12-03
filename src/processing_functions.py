@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 import re
+import scipy.stats as st
 
 def linear_regression2(df, loads):
     """2022-11-28 18:22
@@ -183,3 +184,23 @@ def create_pairs(sortable_list):
     unique_pairs = [sorted(list(pair)) for pair in unique_pairs]
     print(f'Number of unique pairs: {len(unique_pairs)}')
     return unique_pairs
+
+def run_stats(df, columns=['slope', 'intercept', 'Load-1RM-1'], mode=None):
+    """
+    Perform Shapiro-Wilk test for normality.
+
+    Parameters:
+        - df (DataFrame)
+        - columns (list): Column names on which to perform Shapiro-Wilk test
+        - mode ('binary' or None): If binary, return 1 if null hypothesis rejected (not normal).
+            Default is to return p-value.
+    """
+    alpha = 0.05
+    statistics = pd.Series(dtype='float64')
+    for column in columns:
+        if mode == 'binary':
+            statistics['normal '+column] = 1 if st.shapiro(df[column]) < alpha else 0
+        else:
+            statistics['normal '+column] = round(st.shapiro(df[column])[1], 3)
+
+    return statistics

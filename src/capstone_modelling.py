@@ -183,7 +183,7 @@ def stat_modelling(df, model_name='regressor', mvt='individual'):
         y_pred = df['slope'] * df['group MVT'] + df['intercept']
     y_test = df['Load-1RM-1']
     fig = compare_ml_stat(y_test, y_pred, y_pred_stat, model_name=model_name, plot=True)
-    return y_pred_stat, fig
+    return y_pred, fig
 
 def model_data_vs_stat(df, x_columns, model, model_name='regressor'):
     """

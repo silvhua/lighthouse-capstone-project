@@ -234,7 +234,7 @@ def data_viz(df_fw, df_sm):
     ax[0,0].legend()
     return fig
 
-def compare_models(fw_predictions, sm_predictions, title='Model predictions', 
+def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model predictions', 
     context='talk', annotate=True, ymin=-1.5, ymax=5):
     """2022-11-27 23:00
 
@@ -312,7 +312,7 @@ def compare_models(fw_predictions, sm_predictions, title='Model predictions',
     print(f'Metrics dataframe shape (free weight data): {fw_metrics.shape}')
 
     sm_error['Metric'] = 'Error'
-    sm_mae = abs(fw_error.iloc[:,:-1])
+    sm_mae = abs(sm_error.iloc[:,:-1])
     sm_mae['Metric'] = 'MAE'
     sm_metrics = pd.concat([sm_error, sm_mae], axis=0).melt(
         value_vars=fw_models, id_vars=['Metric'], var_name='model')
