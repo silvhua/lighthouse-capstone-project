@@ -267,7 +267,7 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 
 models were evaluated with the coefficient of determination (r^2) and mean absolute error (MAE) using 10-fold cross-validation. Results are as follows:
 
-<img src="./output/figures/02 iteration CV metrics ALL MODELS.png">
+<img src="./output/figures/02 iteration CV metrics ALL MODELS.png"> 
 
 
 
