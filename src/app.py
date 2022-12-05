@@ -50,14 +50,14 @@ def plot_lv_profile(loads, velocities, X):
 st.write('Please enter data for at least two different loads.')
 velocities = []
 loads = []
-weight1 = st.number_input('Weight #1')
-velocity1 = st.number_input('Mean concentric velocity #1')
-weight2 = st.number_input('Weight #2')
-velocity2 = st.number_input('Mean concentric velocity #2')
-weight3 = st.number_input('Weight #3 (optional)')
-velocity3 = st.number_input('Mean concentric velocity #3 (optional)')
-weight4 = st.number_input('Weight #4 (optional)')
-velocity4 = st.number_input('Mean concentric velocity #4 (optional)')
+weight1 = st.sidebar.number_input('Weight #1')
+velocity1 = st.sidebar.number_input('Mean concentric velocity #1')
+weight2 = st.sidebar.number_input('Weight #2')
+velocity2 = st.sidebar.number_input('Mean concentric velocity #2')
+weight3 = st.sidebar.number_input('Weight #3 (optional)')
+velocity3 = st.sidebar.number_input('Mean concentric velocity #3 (optional)')
+weight4 = st.sidebar.number_input('Weight #4 (optional)')
+velocity4 = st.sidebar.number_input('Mean concentric velocity #4 (optional)')
 if weight1 > 0:
     loads.append(weight1)
     if weight2 > 0:
