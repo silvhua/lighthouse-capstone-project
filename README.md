@@ -1,6 +1,6 @@
 # Goals
 
-Maximal strength is measured using the maximum weight that one can use for a given exercise, known as the **1 repetition maximum (1RM)**. 1RM strength is the key performance indicator by which Olympic weightlifters and powerlifters are evaluated. Other athletes and exercisers may also want to estimate 1RM strength in order to:
+Maximal strength is measured using the maximum weight that one can use for a given exercise, known as the **1 repetition maximum (1RM)**. **This project aims to predict 1RM strength using data from submaximal testing**. 1RM strength is the key performance indicator by which Olympic weightlifters and powerlifters are evaluated. Other athletes and exercisers may also want to estimate 1RM strength in order to:
 * Determine how much weight to use on a given training session. It is common for structured training programs to prescribe weight selection based on a percentage of 1RM.
 * Enhance motivation, particularly with number-oriented individuals.
 
@@ -359,7 +359,7 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 
 
 # Conclusions
-Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  The follow regression equations can be used to estimate 1RM using these models *[coefficients `a` and `b` to be filled in later]*:
+**Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required**. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  The follow regression equations can be used to estimate 1RM using these models *[coefficients `a` and `b` to be filled in later]*:
 
 Model | FW Squat | SM Squat
 --- | ---- | ---
