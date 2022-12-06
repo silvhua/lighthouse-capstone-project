@@ -87,7 +87,7 @@ Limitations of the data:
 
 
 # Experiment 1
-This project was performed using Python in VSCode with the Jupyter Notebook extension. Modules and packages include Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn, Keras/Tensorflow, and Statsmodels.
+This project was performed using Python in VSCode with the Jupyter Notebook extension. Modules and packages include Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn, Keras/Tensorflow, and SciPy.
 
 
 ## Data Preparation
@@ -97,9 +97,10 @@ Minimal data cleaning were required as most of this was done by the researchers 
 <details>
 <summary>Expand for details of the data entry error. </summary>
 The `Load80%1RM` feature used during data collection should be ~80% of the participant's `Load-1RM-1`. For one participant, the value was much lower than expected (0.8 x 197.5 = 177.75, but the value listed was 117.5), likely due to a data entry error. This incorrect value was replaced with 177.5 (closest weight increment to 80% of the `Load-1RM-1`) 
+
 </details>
 
-
+<br>
 
 ## Feature Engineering
 

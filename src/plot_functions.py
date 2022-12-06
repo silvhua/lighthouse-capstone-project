@@ -372,8 +372,8 @@ def compare_models2(predictions, title='Measured 1RM vs. model predictions',
         save_csv(metrics, 'Model errors', path=path)
     """
     fw_models = predictions[predictions.columns[~predictions.columns.str.contains('Measured')]].columns.to_list()
-    sns.reset_defaults()    
-    %matplotlib inline
+    # sns.reset_defaults()    
+    # %matplotlib inline
     font_scale=.8 if context=='talk' else 1
     rc={'lines.markersize': 6} if context=='talk' else None
     sns.set_theme(context=context, style='ticks', font_scale=font_scale, 

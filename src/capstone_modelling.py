@@ -5,6 +5,14 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_validate
+import scipy.stats as st
+import numpy as np
+
+import sys
+sys.path.append(r"C:\Users\silvh\OneDrive\lighthouse\custom_python")
+from silvhua import *
+
 
 def evaluate_regression(y_test, y_pred, y_train, y_pred_train, model_name='regressor',plot=True):
     """2022-11-27 21:23
@@ -334,3 +342,159 @@ def run_all_models(stat_models_dict, ml_models_dict, df, x_columns=['slope', 'in
         save_csv(metrics, f'{pickle_name} metrics and coefficients', path=path+'\models')
 
     return predictions, metrics, ml_models_dict
+
+def batch_model(model_names, df_dict, estimator=None, x_columns=['slope', 'intercept'], pickle_name=None,
+    path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output'):
+    """2022-12-02 23:06
+    Fit and evaluate multiple dataframes using given estimator. Meant for testing multiple 
+        feature engineering iterations.
+    Parameters:
+        - model_names (list): List of model names to iterate over.
+        - df_dict (dict): Dictionary of DataFrames containing the data for modelling.
+        - x_columns (list): List of feature names in the dataframes.
+        - pickle_name (str): Root of filename for saving results. If None, results are not automatically saved.
+
+    Returns:
+        - predictions (DataFrame): Predictions from each of the models.
+        - metrics (DataFrame): Cross validation metrics, model coefficients, 
+            paired ttest results and Cohen's d effect size between predicted vs. true results.
+        - model_dict (dict): Dictionary containing the trained models. 
+
+    Example syntax:
+        predictions, metrics, model_dict = batch_model(model_names, df_fw_dict, pickle_name='03 iteration')
+    """
+    # Initialize dataframes for storing model outputs
+    predictions = pd.DataFrame()
+    coefficients = pd.DataFrame()
+    cv_metrics = pd.DataFrame()
+    stats = pd.DataFrame()
+    model_dict = dict()
+    
+    # Add true y value
+    predictions['Measured'] = df_dict[model_names[0]]['Load-1RM-1']
+
+    for model in model_names:
+        # Run model
+        if (estimator==None):
+            model_dict[model] = LinearRegression() 
+            predictions[model], fig, coefficients[model] = model_data_vs_stat(
+                df_dict[model], x_columns, model=model_dict[model], model_name=model
+            )
+        else: 
+            model_dict[model] = estimator
+            model_dict[model].fit(df_dict[model][x_columns], df_dict[model]['Load-1RM-1'])
+            predictions[model] = model_dict[model].predict(df_dict[model][x_columns])
+        # cross-validation metrics
+        cv_metrics[model] = evaluate_with_cv(df_dict[model], x_columns, 
+            model=model_dict[model], model_name=model)
+
+        # ttest and Cohen's d effect size
+        stats[model] = compare_means(
+                df_dict[model]['Load-1RM-1'], # True y value
+                predictions[model], type='paired') # Model predicts
+
+        # Concatenate
+        metrics = pd.concat([cv_metrics, 
+            stats, 
+            coefficients
+            ], axis=0)
+        metrics = round(metrics, 4)
+        # pickle the model
+        if pickle_name:
+            savepickle(model_dict[model], f'{pickle_name} {model}', path=path+'\models')
+        
+    # save predictions and metrics
+    if pickle_name:
+        save_csv(predictions, f'{pickle_name} predictions', path=path+'\predictions')
+        save_csv(metrics, f'{pickle_name} metrics and coefficients', path=path+'\models')
+
+    return predictions, metrics, model_dict
+
+def cv_mae_r2(df, estimator, x_columns, cv_folds=10):
+    """2022-12-02 from 23:09 2022-12-01 iteration 3 notebook.
+
+    Determine mean absolute error through cross-validation.
+
+    Parameters:
+        - df: DataFrame containing the data.
+        - estimator: Instantiate a regressor, e.g. LinearRegression(). 
+        - x_columns: Feature columns in df.
+        - cv_folds: Number of cross validation folds.
+
+    Returns:
+        mae, r2 (array): Results from all cross validation folds.
+    """
+    X = df[x_columns]
+    y = df['Load-1RM-1']
+    cv_results = cross_validate(estimator, X, y, cv=cv_folds,
+        scoring=['neg_mean_absolute_error', 'r2']
+        )
+    mae = abs(cv_results['test_neg_mean_absolute_error'])
+    r2 = cv_results['test_r2']
+    return mae, r2
+
+def batch_run_cv(model_names, df_dict, estimator, x_columns=['slope', 'intercept'], cv_folds=10):
+    """2022-12-02 from 23:09 2022-12-01 iteration 3 notebook.
+    
+    Determine mean absolute error through cross-validation on multiple models.
+
+    Parameters:
+        - model_names (list): List of model names to iterate over.
+        - df_dict (dict): Dictionary of DataFrames containing the data for modelling.
+        - x_columns (list): List of feature names in the dataframes.
+        - estimator: Instantiate a regressor, e.g. LinearRegression(). 
+        - x_columns: Feature columns in df.
+        - cv_folds: Number of cross validation folds.
+
+    Returns:
+        mae, r2: DataFrames containing the MAE and r^2 scores from each fold (1 column per model).
+    """
+    
+    cv_mae = pd.DataFrame()
+    cv_r2 = pd.DataFrame()
+    for model in model_names:
+        cv_mae[model], cv_r2[model] = cv_mae_r2(df_dict[model], estimator, x_columns, cv_folds)
+    return cv_mae, cv_r2
+
+def evaluate_with_cv(df, x_columns, model, model_name='regressor'):
+    """
+    Model, fit, and evaluate machine learning model compared with statistical linear regression.
+
+    """
+
+    X = df[x_columns]
+    y = df['Load-1RM-1']
+    y_pred_stat = df['slope'] * df['100%MV'] + df['intercept']
+    cv_results = cross_validate(model, X, y, cv=10,
+        scoring=['r2', 'neg_mean_absolute_error']
+        )
+    scores = dict()
+    scores['mae']= abs(cv_results['test_neg_mean_absolute_error'].mean())
+    scores['r2'] = cv_results['test_r2'].mean()
+    
+    return scores
+
+def compare_means(d1, d2, type='paired'):
+    """
+    Perform 2-sample t-tests and calculate Cohen's d effect size between two samples.
+    """
+    stats = pd.Series(dtype='float64')
+    # calculate the size of samples
+    n1, n2 = len(d1), len(d2)
+    # calculate the variance of the samples
+    s1, s2 = np.var(d1, ddof=1), np.var(d2, ddof=1)
+    if type=='paired': 
+        # Calculate standard deviation of first sample
+        s = np.sqrt(s1)
+        # Calculate t-test
+        stats['t statistic'], stats['ttest pvalue'] = st.ttest_rel(d1, d2)
+    else:
+        # calculate the pooled standard deviation
+        s = np.sqrt(((n1 - 1) * s1 + (n2 - 1) * s2) / (n1 + n2 - 2))
+        # Calculate t-test
+        stats['t statistic'], stats['ttest pvalue'] = st.ttest_ind(d1, d2)
+    # calculate the means of the samples
+    u1, u2 = np.mean(d1), np.mean(d2)
+    # calculate the effect size
+    stats['Cohens d'] = round(((u2 - u1) / s), 2)
+    return stats
