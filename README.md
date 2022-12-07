@@ -17,14 +17,20 @@ Prediction of 1RM using the load-velocity profile assumes that even when the ath
 
 **The overaching goal of this project is to use machine learning (ML) to develop a regression model for predicting 1 repetition maximum (1RM) strength for the free weight squat and Smith machine squat using submaximal weight** so that 1RM can be estimated reliably, safely, and frequently. This was done using load and velocity data during repetitions performed at submaximal loads with the intent to move at maximum concentric velocity. 
 
-# Hypothesis
+# Approach
+
+Experiment 1 compared various non-ML and ML models. Experiment 2 compared various combinations of loads ranging from 20-90% 1RM. This project was performed using Python in VSCode with the Jupyter Notebook extension. Modules and packages include Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn, Keras/Tensorflow, and SciPy.
+
+
+# Experiment 1
+## Hypothesis
 
 This project is based on a previous study by [Balsalobre-Fernández and Kipp (2021)](https://doi.org/10.3390/sports9030039), which had the same objective using the bench press exercise. Based on their findings, I hypothesize that:
 * Machine learning models can allow for 1RM estimation for both the free weight (FW) squat and Smith machine (SM) squat using two features, the slope and y-intercept of the individual's load-velocity profile. In other words, machine learning allows for this estimation without knowledge of the concentric velocity during a 1RM load (MVT). 
 * Linear regression machine learning (ML) models will allow for 1RM estimation with a lesser likelihood of overestimation than statistical machine learning models
 
-# Exploratory Data Analysis
-## The Data Set
+## Exploratory Data Analysis
+
 Data for this project were provided by Dr. Carlos Balsalobre-Fernández from Universidad Autónoma de Madrid. Data were collected by researchers from 52 participants who each performed the FW squat and SM squat at various loads. Following a standardized warm up routine, participants perfored the exercise 1-2 repetitions with their maximal intended velocity starting with a light weight, then with progressively higher weight until reaching their 1 repetition maximum. A total of 6 loads were used per participant per exercise and participants rested between each load to allow fatigue to dissipate. There were 2 data sets (1 for each of the FW squat and SM squat), each with 52 rows (1 per participant). The columns are as follows:
 * `Participant ID`
 * `Age`
@@ -43,8 +49,9 @@ Data for this project were provided by Dr. Carlos Balsalobre-Fernández from Uni
 * `90%MV`
 * `100%MV`
 
-## Data Visualization
+
 ### Original Features
+
 Load-velocity profiles for all subjects are shown in this figure:
 ![visualization of all LV profiles](./output/figures/data_viz.png)
 
@@ -91,9 +98,6 @@ Limitations of the data:
 * The features used in modelling, LV slope and LV intercept, are collinear. Because the main goal in modelling is to predict 1RM with the smallest error for practical application, both features are retained in the models.
 
 
-
-# Experiment 1
-This project was performed using Python in VSCode with the Jupyter Notebook extension. Modules and packages include Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn, Keras/Tensorflow, and SciPy.
 
 
 ## Data Preparation
@@ -292,7 +296,7 @@ It is hypothesized that:
 1. Using moderate to heavy loads will provide the best estimates, since there will be less variability in the concentric velocity (as indicated in Figure 1, where there is greater variability in the data at lighter loads).
 2. If the appropriate two loads are selected, using more data points to calculate LV slope and LV intercept won't meaningfully improve 1RM prediction.
 
-## Process
+## Data Preparation 
 Each individual's LV slope and LV intercept were calculated using each of the following subsets of %1RM loads:
 * 20% and 60%
 * 20% and 80%
