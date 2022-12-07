@@ -1,19 +1,21 @@
 # Goals
 
-Maximal strength is measured using the maximum weight that one can use for a given exercise, known as the **1 repetition maximum (1RM)**. **This project aims to predict 1RM strength using data from submaximal testing**. 1RM strength is the key performance indicator by which Olympic weightlifters and powerlifters are evaluated. Other athletes and exercisers may also want to estimate 1RM strength in order to:
-* Determine how much weight to use on a given training session. It is common for structured training programs to prescribe weight selection based on a percentage of 1RM.
+Maximal strength is measured using the maximum weight that one can use for a given exercise, known as the **1 repetition maximum (1RM)**. **This project aims to predict 1RM strength using data from lifting loads below 1RM**. 1RM strength is the key performance indicator by which Olympic weightlifters and powerlifters are evaluated. Other athletes and exercisers may also want to estimate 1RM strength in order to:
+* Determine how much weight to use on a given training session. It is common for structured weight training programs to prescribe weight selection based on a percentage of 1RM.
 * Enhance motivation, particularly with number-oriented individuals.
 
-Testing one's 1RM, which involves progressively increasing weight on a given exercise until reaching the point of failure, is inherently fatiguing and higher risk, particularly for an exercise such as the barbell squat. Additionally, achieving one's true 1RM on a given day is contingent on having optimal conditions such as low fatigue and the right psychological conditions. Whereas strength athletes test 1RM only a few times per year, often with a period of lower training volume in the preceding weeks to allow fatigue to dissipate for full expression of strength, submaximal testing can be performed frequently. 
+Testing 1RM, which involves lifting progressively heavier weight on a given exercise until nearing/reaching the point of failure, is inherently fatiguing and higher risk, particularly for an exercise such as the barbell squat. Additionally, achieving one's true 1RM on a given day is contingent on having optimal conditions such as low fatigue and the right psychological conditions. Whereas strength athletes test 1RM only a few times per year (often with lower training volume in the preceding weeks to reduce accumulated fatigue), submaximal testing can be performed frequently. 
 
-For the reasons outlined above, competitive athletes and exercisers benefit from estimating their maximal strength (as indicated by 1RM) using submaximal loads (e.g. 80%). Athletes and exercisers use weight lifted to evaluate strength as it is an objective indicator of how much force the body exerts. **Concentric velocity** (i.e. movement speed when lifting the weight) is an additional objective indicator of force: Being able to move the same weight at a faster speed means that more force is being applied. Athletes who track their concentric velocities during testing with 1RM and submaximal loads can then create a **load-velocity profile** (see figure 1 below) using statistical linear regression to then estimate 1RM in the future using:
-* Slope of the load-volocity profile (**LV slope**).
-* Intercept of the load-velocity profile (**LV intercept**).
-* Estimated or previously-measured velocity at 100% of the 1RM, known as the **minimum velocity threshold (MVT)**
+For the reasons outlined above, competitive athletes and exercisers benefit from estimating their maximal strength (as indicated by 1RM) using submaximal loads (e.g. 80%). Athletes and exercisers use weight lifted to evaluate strength becauase it is an objective indicator of how much force the body exerts. **Concentric velocity** (i.e. movement speed when lifting the weight) is an additional objective indicator of force: Being able to move the same weight at a faster speed means that more force is being applied. 
 
-Subsequent prediction of 1RM using a load-velocity profile assumes that even when the athlete's strength changes (which changes the LV slope and intercept) the MVT is constant. 
+Athletes who track their concentric velocities during exercise testing with a range of weights can create a **load-velocity profile** (see figure 1 below). Statistical linear regression can then be used to estimate 1RM using the:
+* slope of the load-volocity profile (**LV slope**),
+* intercept of the load-velocity profile (**LV intercept**), and
+* estimated or previously-measured velocity at 100% of the 1RM, known as the **minimum velocity threshold (MVT)**
 
-The goal of this project is to use machine learning (ML) to develop a regression model for predicting 1 repetition maximum (1RM) strength for the free weight squat and Smith machine squat using submaximal weight, even without knowledge of MVT (unlike with statistical regression methods). This was done using load and velocity data during repetitions performed at submaximal loads with the intent to move at maximum concentric velocity. 
+Prediction of 1RM using the load-velocity profile assumes that even when the athlete's strength changes (which changes the LV slope and intercept), the MVT is constant. If the individual has no previous MVT measurement, MVT can be estimated using the a typical MVT value for that exercise from other individuals ([Balsalobre-Fernández and Kipp, 2021](https://doi.org/10.3390/sports9030039)).
+
+**The overaching goal of this project is to use machine learning (ML) to develop a regression model for predicting 1 repetition maximum (1RM) strength for the free weight squat and Smith machine squat using submaximal weight** so that 1RM can be estimated reliably, safely, and frequently. This was done using load and velocity data during repetitions performed at submaximal loads with the intent to move at maximum concentric velocity. 
 
 # Hypothesis
 
