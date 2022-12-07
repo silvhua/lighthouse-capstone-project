@@ -23,7 +23,7 @@ This project is based on a previous study by [Balsalobre-Fernández and Kipp (20
 
 # Exploratory Data Analysis
 ## The Data Set
-Data for this project were provided by Dr. Carlos Balsalobre-Fernández from Universidad Autónoma de Madrid. Data were collected by *[name of authors who performed the experiments]* with 52 participants who each performed the FW squat and SM squat at various loads. Following a standardized warm up routine, participants perfored the exercise 1-2 repetitions with their maximal intended velocity starting with a light weight, then with progressively higher weight until reaching their 1 repetition maximum. A total of 6 loads were used per participant per exercise and participants rested between each load to allow fatigue to dissipate. There were 2 data sets (1 for each of the FW squat and SM squat), each with 52 rows (1 per participant). The columns are as follows:
+Data for this project were provided by Dr. Carlos Balsalobre-Fernández from Universidad Autónoma de Madrid. Data were collected by researchers from 52 participants who each performed the FW squat and SM squat at various loads. Following a standardized warm up routine, participants perfored the exercise 1-2 repetitions with their maximal intended velocity starting with a light weight, then with progressively higher weight until reaching their 1 repetition maximum. A total of 6 loads were used per participant per exercise and participants rested between each load to allow fatigue to dissipate. There were 2 data sets (1 for each of the FW squat and SM squat), each with 52 rows (1 per participant). The columns are as follows:
 * `Participant ID`
 * `Age`
 * `Mass`
@@ -76,9 +76,13 @@ Univariate distributions and bivariate correlations of the features used for mod
 
 
 
-FW squat | SM squat
---- | ---
-<img src="./output/figures/04 iteration FW pairplot.png" width=400> | <img src="./output/figures/04 iteration SM pairplot.png" width=400>
+*FW squat*
+
+<img src="./output/figures/04 iteration FW pairplot.png" width=400>
+ 
+*SM squat*
+
+<img src="./output/figures/04 iteration SM pairplot.png" width=400>
 
 Limitations of the data:
 * Results from Shapiro-Wilks tests indicated that variables are not normally distributed (p<0.05). It is likely that with a larger sample size, the data would have a normal distribution. I decided not to transform the data to to reduce skewness because it would make the results of the models less practical to apply for athletes and coaches. 
@@ -142,10 +146,10 @@ The first experiment of the project aimed to replicate the 5 models used in the 
 
 Model | Description | Model Independent Variable(s) 
 --- | ---- | ---
-Model 1 | Statistical linear regression | **individual** MVT
-Model 2 | Statistical linear regression | **mean group** MVT
-Model 3 | ML multilinear regression with ordinary least squares (OLS) | LV slope and LV intercept
-Model 4 | ML Lasso regression | LV slope and LV intercept
+Model 1: `Stat Ind MVT` | Statistical linear regression | **individual** MVT
+Model 2: `Stat Grp MVT` | Statistical linear regression | **mean group** MVT
+Model 3: `OLS` | ML multilinear regression with ordinary least squares (OLS) | LV slope and LV intercept
+Model 4: `Lasso` | ML Lasso regression | LV slope and LV intercept
 Model 5 | Neural network with 1 hidden layer of 10 nodes | LV slope and LV intercept
 
 The second experiment used the ML linear regression with OLS (Model 3) and random forest regression. 
@@ -359,17 +363,33 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 
 
 # Conclusions
-**Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required**. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  The follow regression equations can be used to estimate 1RM using these models *[coefficients `a` and `b` to be filled in later]*:
+**Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required**. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  Based on results from experiment 1, the follow regression equations can be used to estimate 1RM using these models:
 
 Model | FW Squat | SM Squat
 --- | ---- | ---
-OLS | a × LV_{slope} + b × LV_{intercept} | a × LV_{slope} + b × LV_{intercept} 
-Lasso | a × LV_{slope} + b × LV_{intercept} | a × LV_{slope} + b × LV_{intercept}
+OLS | 0.6757 × LV_{slope} + 1.2618 × LV_{intercept} + 3.9407 | 0.5847 × LV_{slope} + 1.262 × LV_{intercept} - 7.6567
+Lasso | 0.6533 × LV_{slope} + 1.2438 × LV_{intercept} + 4.1046 | 0.5675 × LV_{slope} + 1.2467 × LV_{intercept} - 7.2121
 
 Given errors of these models, an athlete who wants to be conservative can subtract 2-3 kg (or more) from the estimated 1RM value.
 
 Using these trained models, web app has been created for users who want to use their load-velocity data to predict 1RM, or simply to compute and visualize the slope and intercept of their load-velocity curve. Users can input their data for 2-4 loads, and one of the train models will provide a prediction based on LV slope and LV intercept determine from the linear regression from the entered data. The URL for the web app is https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/ 
-*[Provide details of the deployed models]*
+
+<details>
+<summary>Click for details on the app models </summary>
+
+<br>
+
+The app provides 1RM predictions using the trained `OLS` models. The number of data load-velocity data points provided by the user determines which model is used for prediction:
+
+Data points provided | Trained model | Model details
+--- | --- | ---
+2 | `LV 40-80` | `LV slope` and `LV intercept` were determined using loads at 40% and 80% of 1RM
+3 | `LV 40-80` | `LV slope` and `LV intercept` were determined using loads at 40%, 60%, and 80% of 1RM
+4 | `LV 40-80` | `LV slope` and `LV intercept` were determined using loads at 40%, 60%, 80%, and 90% of 1RM
+
+
+</details>
+<br>
 
 # Challenges
 The nature of most exercise science research is that it is challenging to recruit a large number of participants. After discussing with a program mentor about the poor performance of the neural network model, I decided to focus on linear regression models, as neural networks require thousands of samples to work well. At the same time, having prediction models that don't require neural networks makes their use more accessible for the population at large.
