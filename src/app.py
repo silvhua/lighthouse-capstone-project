@@ -8,6 +8,9 @@ import plotly.graph_objects as go
 st.title('1RM estimator')
 st.write(f'Use your load velocity profile to estimate your back squat 1RM')
 
+st.markdown('By Silvia Hua')
+st.markdown('Project details found on [Github](https://github.com/silvhua/lighthouse-capstone-project)')
+
 def app_linear_regression(loads, velocities):
     """2022-11-30 19:00
     Calculate slope and intercept using linear regression, where X = load, y = velocity.
