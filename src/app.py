@@ -6,9 +6,9 @@ import plotly.graph_objects as go
 
 # App link: https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/
 st.title('1RM estimator')
-st.write(f'Use your load velocity profile to estimate your back squat 1RM')
+st.markdown('### Use your load velocity profile to estimate your back squat 1RM')
 
-st.markdown('By Silvia Hua')
+st.markdown('By [Silvia Hua](https://www.linkedin.com/in/silviahua/)')
 st.markdown('Project details found on [Github](https://github.com/silvhua/lighthouse-capstone-project)')
 
 def app_linear_regression(loads, velocities):
@@ -50,7 +50,7 @@ def plot_lv_profile(loads, velocities, X):
     )
     st.plotly_chart(fig, use_container_width=True)
 
-st.write('Please enter data for at least two different loads.')
+st.write('Please enter data for at least two different loads (see left sidebar).')
 velocities = []
 loads = []
 weight1 = st.sidebar.number_input('Weight #1')
