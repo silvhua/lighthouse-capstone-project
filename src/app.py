@@ -5,8 +5,8 @@ import pickle
 import plotly.graph_objects as go
 
 # App link: https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/
-st.title('1RM estimator')
-st.markdown('### Use your load velocity profile to estimate your back squat 1RM')
+st.title('1RM Estimator')
+st.markdown('### Use your load-velocity profile to estimate your back squat 1RM')
 st.markdown('')
 st.markdown('#### Please enter data for at least two different loads (see left sidebar).')
 st.markdown('')
@@ -79,7 +79,7 @@ if velocity1 > 0:
             if velocity4 > 0:
                 velocities.append(velocity4)
 
-# Only take the number of data points equal if both velocity and laod are provided
+# Only take the number of data points where both velocity and load are provided
 n_data_points = min(len(loads), len(velocities))
 loads = loads[:n_data_points]
 velocities = velocities[:n_data_points]
