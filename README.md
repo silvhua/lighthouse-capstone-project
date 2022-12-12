@@ -266,11 +266,16 @@ These errors are quantified below for each model and exercise (error bars repres
 
 
 
-
-
 Based on the error values (blue bars), the statistical models (`Stat ind MVT` and `Stat grp MVT`) on average overestimate 1RM by 3.8-5.3 kg for each of the FW and SM squat, whereas the ML models (`OLS` and `Lasso`) are as equally likely to overpredict as they are to underpredict. 
 
-Based on mean absolute error (MAE; red bars), ML models performed slightly better than the statistical models (error of 5.4-7.1 kg vs. 3.2-4.3 kg, respectively).
+Based on mean absolute error (MAE; red bars), ML models performed slightly better than the statistical models (error of 5.4-7.1 kg vs. 3.2-4.3 kg, respectively). Predicted 1RM values were compared with the measured 1RM values using paired t-tests. Predictions from the `OLS` and `Lasso` models were not significantly different from the measured values. However, predictions from the `Stat ind MVT` and `Stat grp MVT` models did significantly differ from measured values (p < 0.001, Cohen's d = 0.14).
+
+. | Stat Ind MVT | Stat Grp MVT | OLS | Lasso 
+--- | --- | --- | --- | --- | 
+t statistic | -4.918 | -5.026 | 0.000 | 0.000
+p-value | 0.000 | 0.000 | 1.000 | 1.000
+Cohens d | 0.140000 | 0.140000 | 0.000 | 0.000
+
 
 ### Neural Network (Model 5)
 
