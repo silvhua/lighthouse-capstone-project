@@ -234,69 +234,6 @@ def model_data_vs_stat(df, x_columns, model, model_name='regressor'):
 
     return y_pred, fig, features
 
-def batch_model(model_names, df_dict, estimator=None, x_columns=['slope', 'intercept'], pickle_name=None,
-    path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output'):
-    """2022-12-02 23:06
-    Fit and evaluate multiple dataframes using given estimator. See `2022-12-01 iteration 3` notebook.
-    Parameters:
-        - model_names (list): List of model names to iterate over.
-        - df_dict (dict): Dictionary of DataFrames containing the data for modelling.
-        - x_columns (list): List of feature names in the dataframes.
-        - pickle_name (str): Root of filename for saving results. If None, results are not automatically saved.
-
-    Returns:
-        - predictions (DataFrame): Predictions from each of the models.
-        - metrics (DataFrame): Cross validation metrics, model coefficients, 
-            paired ttest results and Cohen's d effect size between predicted vs. true results.
-        - model_dict (dict): Dictionary containing the trained models. 
-    """
-    # Initialize dataframes for storing model outputs
-    predictions = pd.DataFrame()
-    coefficients = pd.DataFrame()
-    cv_metrics = pd.DataFrame()
-    stats = pd.DataFrame()
-    model_dict = dict()
-    
-    # Add true y value
-    predictions['Measured'] = df_dict[model_names[0]]['Load-1RM-1']
-
-    for model in model_names:
-        # Run model
-        if (estimator==None):
-            model_dict[model] = LinearRegression() 
-            predictions[model], fig, coefficients[model] = model_data_vs_stat(
-                df_dict[model], x_columns, model=model_dict[model], model_name=model
-            )
-        else: 
-            model_dict[model] = estimator
-            model_dict[model].fit(df_dict[model][x_columns], df_dict[model]['Load-1RM-1'])
-            predictions[model] = model_dict[model].predict(df_dict[model][x_columns])
-        # cross-validation metrics
-        cv_metrics[model] = evaluate_with_cv(df_dict[model], x_columns, 
-            model=model_dict[model], model_name=model)
-
-        # ttest and Cohen's d effect size
-        stats[model] = compare_means(
-                df_dict[model]['Load-1RM-1'], # True y value
-                predictions[model], type='paired') # Model predicts
-
-        # Concatenate
-        metrics = pd.concat([cv_metrics, 
-            stats, 
-            coefficients
-            ], axis=0)
-        metrics = round(metrics, 4)
-        # pickle the model
-        if pickle_name:
-            savepickle(model_dict[model], f'{pickle_name} {model}', path=path+'\models')
-        
-    # save predictions and metrics
-    if pickle_name:
-        save_csv(predictions, f'{pickle_name} predictions', path=path+'\predictions')
-        save_csv(metrics, f'{pickle_name} metrics and coefficients', path=path+'\models')
-
-    return predictions, metrics, model_dict
-
 def run_all_models(stat_models_dict, ml_models_dict, df, x_columns=['slope', 'intercept'], pickle_name=None,
     path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output'):
     """2022-12-02 23:59 See `2022-12-02 iteration 4` notebook
