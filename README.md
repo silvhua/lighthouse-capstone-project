@@ -350,7 +350,7 @@ Using FW squat data, models were evaluated with the coefficient of determination
 
 
 
-Based on cross-validated MAE and R^2 scores, OLS linear regression models (3.0-10.9 MAE, 0.586-0.973 R^2) performed better than random forest models regardless of hyperparameter tuning (3.7-17.7 MAE, 0.144-0.955 R^2). Linear regression models are also more practical to implement. Thus, OLS linear regression models were used to determine which load combinations would result in the smallest prediction errors. 
+Based on cross-validated MAE and R^2 scores, OLS linear regression models (3.0-10.9 MAE, 0.586-0.973 R^2) performed better than random forest models regardless of hyperparameter tuning (4.7-17.2 MAE, 0.147-0.926 R^2). Linear regression models are also more practical to implement. Thus, OLS linear regression models were used to determine which load combinations would result in the smallest prediction errors. 
 
 <br>
 
