@@ -117,3 +117,4 @@ output/z archive/test set predictions/free weight errors_test set.csv
 output/z archive/test set predictions/fw_test_predictions.csv
 output/z archive/test set predictions/sm_test_predictions.csv
 output/z archive/test set predictions/smith machine errors_test set.csv
+output/z archive/02 iteration model40_80.sav
