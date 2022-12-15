@@ -138,12 +138,6 @@ Below are the individual load velocity profiles and linear regression prediction
 
 
 
-
-
-
-
-
-
 ## Modelling
 
 The project aimed to find the model that would predict 1RM with the least error and with least likelihood of overestimation. Simple models were preferred to facilitate practical application by athletes and coaches.  Thus, linear regression models were selected over other regression models. 
@@ -184,7 +178,7 @@ Exercise | Alpha | CV iterations
 FW squat | 1.11 | 72
 SM squat | 1.11 | 72
 
-With the exception of model 5, the results for Experiment 1 are from models fit on data for all participants. In subsequent iterations, models were fit on all data and evaluated using 10-fold cross validation.
+With the exception of model 5, models in Experiment 1 were fit on data from all participants. 
 
 <br>
 
@@ -239,14 +233,21 @@ Because the Pearson correlation coefficients (r) and coefficient of determinatio
 * Mean residual error: y_{predicted} - y_{measured}
 * Mean absolute error (MAE): | y_{predicted} - y_{measured} |
 
-The following figure of the residuals more clearly shows the magnitude and direction of prediction errors of the 4 models for the FW squats. Overestimated 1RM values are indicated by the red upward arrows. It is evident from this figure that the statistical models (`Stat ind MVT` and `Stat grp MVT`; models shown on the two left panels) overall had greater tendencies to overestimate 1RM values than the ML models (`OLS` and `Lasso`; models shown on the two right panels).
+The following figure of the residuals more clearly shows the magnitude and direction of prediction errors of the 4 models. Overestimated 1RM values are indicated by the red upward arrows. It is evident from this figure that the statistical models (`Stat ind MVT` and `Stat grp MVT`; models shown on the two left columns) overall had greater tendencies to overestimate 1RM values than the ML models (`OLS` and `Lasso`; models shown on the two right columns).
 
 ![residuals](./output/figures/04%20iteration_residuals_plot_FW%20Squat.png)
+
+![residuals SM](./output/figures/02_iteration_SM_residuals_plot_SM%20Squat.png) 
+ 
 <br>
 
 These errors are quantified below for each model and exercise (error bars represent 95% confidence intervals):
 
-![evalutation metrics](./output/figures/04%20Iteration%20Error%20bar%20chart%20for%20all%20samples.png)
+![evalutation metrics FW](./output/figures/04%20Iteration%20Error%20bar%20chart%20for%20all%20samples.png)
+
+
+
+
 
 
 
@@ -266,7 +267,7 @@ These errors are quantified below for each model and exercise (error bars repres
 
 Based on the error values (blue bars), the statistical models (`Stat ind MVT` and `Stat grp MVT`) on average overestimate 1RM by 3.8-5.3 kg for each of the FW and SM squat, whereas the ML models (`OLS` and `Lasso`) are as equally likely to overpredict as they are to underpredict. 
 
-Based on mean absolute error (MAE; red bars), ML models performed slightly better than the statistical models (error of 5.4-7.1 kg vs. 3.2-4.3 kg, respectively). Predicted 1RM values were compared with the measured 1RM values using paired t-tests. Predictions from the `OLS` and `Lasso` models were not significantly different from the measured values. However, predictions from the `Stat ind MVT` and `Stat grp MVT` models did significantly differ from measured values (p < 0.001, Cohen's d = 0.14).
+Based on mean absolute error (MAE; red bars), ML models performed slightly better than the statistical models (error of 5.4-7.1 kg vs. 3.2-4.3 kg, respectively). Predicted 1RM values were compared with the measured 1RM values using paired t-tests. Predictions from the `OLS` and `Lasso` models were not significantly different from the measured values. However, predictions from the `Stat ind MVT` and `Stat grp MVT` models did significantly differ from measured values (p < 0.001, Cohen's d = 0.14-0.17).
 
 . | Stat Ind MVT | Stat Grp MVT | OLS | Lasso 
 --- | --- | --- | --- | --- | 
@@ -285,7 +286,7 @@ The neural network was trained using the Adam algorithm (a stochastic gradient d
 
 Model Performance History | Measured 1RM vs. Predictions
 --- | ---
-<img src="./output/figures/individual%20model%20figures/sm_model5_history_test.png" width=350> | <img src="./output/figures/individual%20model%20figures/sm_model5_test.png" width=350>
+<img src="./output/figures/neuralnetwork/sm_model5_history_test.png" width=350> | <img src="./output/figures/neuralnetwork/sm_model5_test.png" width=350>
 
 Since the predictions were almost the same value across all participants, this model's predictions are not of practical use.
 
@@ -293,7 +294,7 @@ Since the predictions were almost the same value across all participants, this m
 
 
 # Experiment 2
-Given that the ML models used in this project only required the LV slope and LV intercept, only two data points per participant are theoretically required to engineer the model features. This experiment focused on FW squats, which are more commonly performed than SM squats. This time, instead of determining LV slope and LV intercept based on loads at 40%, 60%, and 80%  of 1RM, these were determined using various combinations of a subset of the loads (e.g. 40% and 60% 1RM).
+Given that the ML models used in this project only required the LV slope and LV intercept, only two data points per participant are theoretically required to engineer the model features. This time, instead of determining LV slope and LV intercept based on loads at 40%, 60%, and 80%  of 1RM, these were determined using various combinations of a subset of the loads (e.g. 40% and 60% 1RM).
 
 The aims of this experiment were to determine:
 1. Which two loads would provide the LV slopes and LV intercepts that would produce the 1RM predictions with the least error. 
@@ -316,22 +317,29 @@ Each individual's LV slope and LV intercept were calculated using each of the fo
 * 40%, 60, and 80%
 * 40%, 60, 80, and 90%
 
-Each combination of LV slopes and LV intercepts were then used as features to fit the models.
+Each set of LV slopes and LV intercepts were then used as features to fit the models.
 
-In addition to selecting the OLS linear regression model based from Experiment 1 results, random forest models were also tested since random forest models are suitable for non-Gaussian data distributions and multicollinear independent variables.
+In addition to selecting the OLS linear regression model based from Experiment 1 results, random forest models were also tested since random forest models are suitable for non-Gaussian data distributions and multicollinear independent variables. 
+<details>
+<summary>Expand for more details on Random Forest modelling </summary>
+
+Initial modelling was performed using default hyperparameters (`n_estimators`=100 and `max_depth`=None; LV slope and LV intercept obtained from 40%, 60, and 80% 1RM loads). Grid search with 10-fold cross validation was then used to find the `n_estimators` and `max_depth` values resulting the the best R^2 score. 
+
+</details>
+<br>
 
 ## Results
 ### Model Selection
 <br>
-Models were evaluated with the coefficient of determination (R^2) and mean absolute error (MAE) using 10-fold cross-validation. Results are plotted below:
+Using FW squat data, models were evaluated with the coefficient of determination (R^2) and mean absolute error (MAE) using 10-fold cross-validation. Results are plotted below:
 
 <br>
 
 *OLS Linear Regression*
 <img src="./output/figures/02b iteration CV metrics ALL MODELS.png"> 
 
-*Random Forest Regression*
-<img src="./output/figures/randomforest/randomforest CV metrics ALL MODELS.png"> 
+*Random Forest Regression (`n_estimators`=20, `max_depth`=7)* 
+<img src="./output/figures/randomforest/05 iteration CV metrics RandomForest maxdepth_7 n_estimators20.png"> 
 
 
 
@@ -342,10 +350,7 @@ Models were evaluated with the coefficient of determination (R^2) and mean absol
 
 
 
-
-
-
-Based on cross-validated MAE and R^2 scores, OLS linear regression models (3.0-10.9 MAE, 0.586-0.973 R^2) performed better than random forest models (4.2-16.9 MAE, 0.212-0.934 R^2). Linear regression models are also more practical to implement. Thus, OLS linear regression models were used to determine which load combinations would result in the smallest prediction errors. 
+Based on cross-validated MAE and R^2 scores, OLS linear regression models (3.0-10.9 MAE, 0.586-0.973 R^2) performed better than random forest models regardless of hyperparameter tuning (3.7-17.7 MAE, 0.144-0.955 R^2). Linear regression models are also more practical to implement. Thus, OLS linear regression models were used to determine which load combinations would result in the smallest prediction errors. 
 
 <br>
 
@@ -353,7 +358,7 @@ Based on cross-validated MAE and R^2 scores, OLS linear regression models (3.0-1
 
 <br>
 
-As hypothesized, predictions had lowest error when at least one of the loads used to calculate LV slope and LV intercept was 80% of 1RM or higher: Residual error was 6.4-6.8 kg when all loads were < 80% 1RM vs. 2.9-3.5 kg when at least one of the loads was 80% or higher. The magnitude of the other load (e.g. 20% vs. 60%) had no meaningful impact. Additonally, as long as LV slope and LV intercept were calculated with one of the weights being ~80+ or more, using more than two data points did not meaningfully improve model predictions (error for the `LV 40-60-80-90` model was 2.8 kg vs. 2.9 kg for `LV 40-80`).
+As hypothesized, predictions had lowest error when at least one of the loads used to calculate LV slope and LV intercept was 80% of 1RM or higher: For the FW squat, mean absolute error was 7.0-10.9 kg when all loads were < 80% 1RM vs. 3.0-3.7 kg when at least one of the loads was 80% or higher. The magnitude of the other load (e.g. 20% vs. 60%) had no meaningful impact. Additonally, as long as LV slope and LV intercept were calculated with one of the weights being ~80+ or more, using more than two data points did not meaningfully improve model predictions (MAE for the `LV 40-60-80-90` was the same as for `LV 40-80`).
 
 
 <img src="./output/figures/02%20iteration%20measured%20vs%20predicted%20for%20all%20samples%20SELECT%20MODELS.png" width=600>
@@ -362,8 +367,16 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 <img src="./output/figures/02 iteration_residuals_plot_FW Squat.png" width=600>
 
 
+<details>
+<summary>Expand for figures from Smith machine squat </summary>
 
+![SM squat CV metrics](./output/figures/05_iteration_CV_metrics_SM_ALL_MODELS.png)
 
+<img src="./output/figures/05 iteration SM measured vs predicted for all samples SELECT MODELS.png" width=600>
+
+<img src="./output/figures/05_iteration_SM_residuals_plot_SM%20Squat.png" width=600>
+
+</details>
 
 
 
@@ -376,16 +389,16 @@ As hypothesized, predictions had lowest error when at least one of the loads use
 
 
 # Conclusions & Model Deployment
-**Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required**. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, an individual's LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  Based on results from experiment 1, the follow regression equations can be used to estimate 1RM using these models:
+**Machine learning linear regressions allow athletes to predict 1RM using submaximal testing simply based on the LV profile; no estimation of minimum velocity threshold or prior 1RM testing is required**. These ML models perform at least as equally well as the statistical regression models that require MVT, and are less likely to overestimate 1RM for a given participant. The OLS and Lasso linear regressions performed equally well to each other. Furthermore, an individual's LV profile can simply be estimated using two data points as long as one of the loads is at least ~80%.  Based on results from experiment 1, the following regression equations can be used to estimate 1RM using these models:
 
 Model | FW Squat | SM Squat
 --- | ---- | ---
 OLS | 0.6757 × LV_{slope} + 1.2618 × LV_{intercept} + 3.9407 | 0.5847 × LV_{slope} + 1.262 × LV_{intercept} - 7.6567
 Lasso | 0.6533 × LV_{slope} + 1.2438 × LV_{intercept} + 4.1046 | 0.5675 × LV_{slope} + 1.2467 × LV_{intercept} - 7.2121
 
-Given that the best performing models still had a mean error of ~3kg, an athlete who wants to be conservative can subtract 3 kg (or more) from the estimated 1RM value.
+Given that the best performing models still had a mean absolute error of ~3kg, an athlete who wants to be conservative can subtract 3 kg (or more) from the estimated 1RM value.
 
-Using these trained models, a web app has been created for users who want to use their load-velocity data to predict 1RM, or simply to compute and visualize the slope and intercept of their load-velocity profile. Users can input their data for 2-4 loads for 1RM prediction by one of the trained models. The URL for the web app is https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/ 
+Using these trained models, a web app has been created for users who want to use their load-velocity data to predict 1RM, or simply to compute and visualize the slope and intercept of their load-velocity profile. Users can input their data for 2-4 loads and one of the trained models will predict 1RM. The URL for the web app is https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/ 
 
 <details>
 <summary>Expand for details on the app models </summary>
@@ -397,8 +410,8 @@ The app provides 1RM predictions using the trained `OLS` models. The number of l
 Data points provided | Trained model | Model feature details
 --- | --- | ---
 2 | `LV 40-80` | `LV slope` and `LV intercept` of the training sample were determined using loads at 40% and 80% of 1RM
-3 | `LV 40-80` | `LV slope` and `LV intercept` of the training sample were determined using loads at 40%, 60%, and 80% of 1RM
-4 | `LV 40-80` | `LV slope` and `LV intercept` of the training sample were determined using loads at 40%, 60%, 80%, and 90% of 1RM
+3 | `LV 40-60-80` | `LV slope` and `LV intercept` of the training sample were determined using loads at 40%, 60%, and 80% of 1RM
+4 | `LV 40-60-80-90` | `LV slope` and `LV intercept` of the training sample were determined using loads at 40%, 60%, 80%, and 90% of 1RM
 
 
 </details>
