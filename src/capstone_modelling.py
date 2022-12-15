@@ -343,7 +343,7 @@ def batch_model(model_names, df_dict, estimator=None, x_columns=['slope', 'inter
     # save predictions and metrics
     if pickle_name:
         save_csv(predictions, f'{pickle_name} predictions', path=path+'\predictions')
-        save_csv(metrics, f'{pickle_name} metrics and coefficients', path=path+'\models')
+        save_csv(metrics, f'{pickle_name} metrics and coefficients', path=path+'\model metrics')
 
     return predictions, metrics, model_dict
 
