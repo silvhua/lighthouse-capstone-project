@@ -112,3 +112,8 @@ output/z archive/sm_model3.png
 output/z archive/sm_model2_test.png
 output/z archive/sm_model4_test.png
 output/z archive/sm_model3_test.png
+output/z archive/test set figures/Measured vs predicted for test set.png
+output/z archive/test set predictions/free weight errors_test set.csv
+output/z archive/test set predictions/fw_test_predictions.csv
+output/z archive/test set predictions/sm_test_predictions.csv
+output/z archive/test set predictions/smith machine errors_test set.csv
