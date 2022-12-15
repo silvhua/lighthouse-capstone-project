@@ -1,0 +1,34 @@
+
+output/z archive/02 iteration 20 60.png
+output/z archive/02 iteration 20 80.png
+output/z archive/02 iteration 20 90.png
+output/z archive/02 iteration 40 60 80 90.png
+output/z archive/02 iteration 40 60 80.png
+output/z archive/02 iteration 40 60.png
+output/z archive/02 iteration 40 80.png
+output/z archive/02 iteration 60 80.png
+output/z archive/02 iteration 60 90.png
+output/z archive/02 iteration 80-90.png
+output/z archive/02 iteration CV metrics ALL MODELS.png
+output/z archive/02 iteration CV metrics.csv
+output/z archive/02 iteration error bar chart for all samples SELECT MODELS.png
+output/z archive/02 iteration error bar chart for all samples.png
+output/z archive/02 iteration measured vs predicted for all samples.png
+output/z archive/02b iteration metrics and coefficients.csv
+output/z archive/03 iteration FW metrics and coefficients.csv
+output/z archive/03 iteration metrics and coefficients.csv
+output/z archive/04 Iteration Error bar chart FW.png
+output/z archive/04 iteration_error_bar_chart_FW Squat.png
+output/z archive/coefficients sm models_trained on all data.csv
+output/z archive/Error bar chart for all samples.png
+output/z archive/fw_model1.png
+output/z archive/fw_model1_test.png
+output/z archive/fw_model2.png
+output/z archive/fw_model2_test.png
+output/z archive/fw_model3.png
+output/z archive/fw_model3_test.png
+output/z archive/fw_model4_test.png
+output/z archive/test set figures/individual models/03 iteration LV 20-40 test.png
+output/z archive/test set figures/individual models/03 iteration LV 20-60 test.png
+output/z archive/test set figures/Error bar chart for all samples.png
+output/z archive/sm_model4cv.png
