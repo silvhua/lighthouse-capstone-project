@@ -1,5 +1,18 @@
 [**Click here to access the web app resulting from this project**](https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/ )
-# Goals
+
+<details>
+<summary>Expand for information on how to navigate the figures and other project results in this repository </summary>
+
+Item(s) | Directory
+--- | ---
+figures | output/figures
+model predictions | output/predictions
+pickled models | output/pickled models
+model evaluation metrics, coefficients, and intercepts | output/model metrics and coefficients
+t-test results and effect sizes | output/model metrics and coefficients
+</details>
+
+# Project Goals
 Maximal strength is measured using the maximum weight that one can use for a given exercise, known as the **1 repetition maximum (1RM)**. **This project aims to predict 1RM strength for the squat using data from lifting loads below 1RM**. 1RM strength is the key performance indicator by which Olympic weightlifters and powerlifters are evaluated. Other athletes and exercisers may also want to estimate 1RM strength in order to:
 * Determine how much weight to use on a given training session. It is common for structured weight training programs to prescribe weight selection based on a percentage of 1RM.
 * Enhance motivation, particularly with number-oriented individuals.
