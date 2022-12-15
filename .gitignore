@@ -32,3 +32,83 @@ output/z archive/test set figures/individual models/03 iteration LV 20-40 test.p
 output/z archive/test set figures/individual models/03 iteration LV 20-60 test.png
 output/z archive/test set figures/Error bar chart for all samples.png
 output/z archive/sm_model4cv.png
+output/z archive/fw_model4cv.png
+output/z archive/individual_lv_profiles_fw.png
+output/z archive/individual_lv_profiles_smith.png
+output/z archive/model3_test.png
+output/z archive/model4_test.png
+output/z archive/models with train test split/coefficients sm models_trained on train test split.csv
+output/z archive/models with train test split/fw_LassoCV_tts.sav
+output/z archive/models with train test split/fw_OLS_tts.sav
+output/z archive/models with train test split/sm_LassoCV_tts.sav
+output/z archive/models with train test split/sm_OLS_tts.sav
+output/z archive/MV_vs_load_FW.png
+output/z archive/pairplot_fw.png
+output/z archive/pairplot_sm.png
+output/z archive/pickled models/02 iteration coeffficients.csv
+output/z archive/pickled models/02 iteration free weight errors.csv
+output/z archive/pickled models/02 iteration model40_60_80_90.sav
+output/z archive/pickled models/02 iteration model40_60_80.sav
+output/z archive/pickled models/02 iteration predictions.csv
+output/z archive/pickled models/02 iternation coeffficients.csv
+output/z archive/pickled models/02b iteration LV 20-40.sav
+output/z archive/pickled models/02 iternation predictions.csv
+output/z archive/pickled models/02b iteration LV 20-60.sav
+output/z archive/pickled models/02b iteration LV 20-80.sav
+output/z archive/pickled models/02b iteration LV 20-90.sav
+output/z archive/pickled models/02b iteration LV 40-60-80-90.sav
+output/z archive/pickled models/02b iteration LV 40-60-80.sav
+output/z archive/pickled models/02b iteration LV 40-60.sav
+output/z archive/pickled models/02b iteration LV 40-80.sav
+output/z archive/pickled models/02b iteration LV 60-80.sav
+output/z archive/pickled models/02b iteration LV 40-90.sav
+output/z archive/pickled models/02b iteration LV 60-90.sav
+output/z archive/pickled models/02b iteration LV 80-90.sav
+output/z archive/pickled models/03 iteration FW Lasso.sav
+output/z archive/pickled models/03 iteration FW OLS.sav
+output/z archive/pickled models/03 iteration FW predictions.csv
+output/z archive/pickled models/03 iteration LV 20-40.sav
+output/z archive/pickled models/03 iteration LV 20-60.sav
+output/z archive/pickled models/03 iteration LV 20-80.sav
+output/z archive/pickled models/03 iteration LV 20-90.sav
+output/z archive/pickled models/03 iteration LV 40-60-80-90.sav
+output/z archive/pickled models/03 iteration LV 40-60-80.sav
+output/z archive/pickled models/03 iteration LV 40-60.sav
+output/z archive/pickled models/03 iteration LV 40-80.sav
+output/z archive/pickled models/03 iteration LV 40-90.sav
+output/z archive/pickled models/03 iteration LV 60-90.sav
+output/z archive/pickled models/03 iteration LV 60-80.sav
+output/z archive/pickled models/03 iteration LV 80-90.sav
+output/z archive/pickled models/free weight errors.csv
+output/z archive/pickled models/fw_LassoCV.sav
+output/z archive/pickled models/fw_OLS.sav
+output/z archive/pickled models/fw_predictions.csv
+output/z archive/pickled models/None predictions.csv
+output/z archive/pickled models/random forest LV 40-60-80.sav
+output/z archive/pickled models/random forest LV 40-80.sav
+output/z archive/pickled models/sm_LassoCV.sav
+output/z archive/pickled models/sm_OLS.sav
+output/z archive/pickled models/smith machine errors.csv
+output/z archive/pickled models/sm_predictions.csv
+output/z archive/random forest metrics and coefficients.csv
+output/z archive/random forest predictions.csv
+output/z archive/residuals plots/02 iter residuals LV 20-60.png
+output/z archive/residuals plots/02 iter residuals LV 20-90.png
+output/z archive/residuals plots/02 iter residuals LV 20-80.png
+output/z archive/residuals plots/02 iter residuals LV 40-60-80-90.png
+output/z archive/residuals plots/02 iter residuals LV 40-60-80.png
+output/z archive/residuals plots/02 iter residuals LV 40-60.png
+output/z archive/residuals plots/02 iter residuals LV 40-80.png
+output/z archive/residuals plots/02 iter residuals LV 60-80.png
+output/z archive/residuals plots/02 iter residuals LV 60-90.png
+output/z archive/residuals plots/02 iter residuals LV 80-90.png
+output/z archive/sm_model1_ml.png
+output/z archive/sm_model1.png
+output/z archive/sm_model1_test.png
+output/z archive/sm_model1_test_split.png
+output/z archive/sm_model2.png
+output/z archive/sm_model2_ml.png
+output/z archive/sm_model3.png
+output/z archive/sm_model2_test.png
+output/z archive/sm_model4_test.png
+output/z archive/sm_model3_test.png
