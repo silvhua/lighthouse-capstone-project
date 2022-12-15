@@ -1,7 +1,5 @@
 [**Click here to access the web app resulting from this project**](https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/ )
-
 # Goals
-
 Maximal strength is measured using the maximum weight that one can use for a given exercise, known as the **1 repetition maximum (1RM)**. **This project aims to predict 1RM strength for the squat using data from lifting loads below 1RM**. 1RM strength is the key performance indicator by which Olympic weightlifters and powerlifters are evaluated. Other athletes and exercisers may also want to estimate 1RM strength in order to:
 * Determine how much weight to use on a given training session. It is common for structured weight training programs to prescribe weight selection based on a percentage of 1RM.
 * Enhance motivation, particularly with number-oriented individuals.
@@ -20,9 +18,7 @@ Prediction of 1RM using the load-velocity profile assumes that even when the ath
 **The overaching goal of this project is to use machine learning (ML) to develop a regression model for predicting 1 repetition maximum (1RM) strength for the free weight squat and Smith machine squat using submaximal weight** so that 1RM can be estimated reliably, safely, and frequently. This was done using load and velocity data during repetitions performed at submaximal loads with the intent to move at maximum concentric velocity. 
 
 # Approach
-
 Experiment 1 compared various non-ML and ML models. Experiment 2 compared various combinations of loads (ranging from 20-90% 1RM) for feature engineering, and compared a linear ML model with a random forest model. This project was performed using Python in VSCode with the Jupyter Notebook extension. Modules and packages include Pandas, Numpy, Matplotlib, Seaborn, Scikit-Learn, Keras/Tensorflow, and SciPy.
-
 
 # Experiment 1
 ## Hypothesis
@@ -274,10 +270,14 @@ Based on mean absolute error (MAE; red bars), ML models performed slightly bette
 
 . | Stat Ind MVT | Stat Grp MVT | OLS | Lasso 
 --- | --- | --- | --- | --- | 
+**FW Squat**
 t statistic | -4.918 | -5.026 | 0.000 | 0.000
 p-value | 0.000 | 0.000 | 1.000 | 1.000
-Cohens d | 0.140000 | 0.140000 | 0.000 | 0.000
-
+Cohens d | 0.140 | 0.140 | 0.000 | 0.000
+**SM Squat**
+t statistic | -8.879 | -5.847 | -0.00 | -0.00
+p-value | 0.000 | 0.000 | 1.000 | 1.000
+Cohens d | 0.170 | 0.170 | 0.000 | 0.000
 
 ### Neural Network (Model 5)
 
