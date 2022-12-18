@@ -32,3 +32,75 @@ def plot_cv_metrics(mae_df, r2_df, color='silver', context='talk', ymin=None, ym
     # Titles and axis labels
     # fig.suptitle('Cross-Validated Evaluation Metrics')
     return fig
+
+def plot_residuals2(predictions, title='Squat', 
+    context='talk', annotate=True, ymin=-1.5, ymax=8, labels=None, pickle_name=None,
+    path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output\figures'):
+    """2022-12-03 10:35 Mainly for presentation to keep it brief
+
+    Plot residuals from all the models for a dataset.
+        Parameters:
+            - predictions (DataFrame): 
+                Dataframe that contains target data ('Measured' column) and model predictions
+                (1 column per model).
+            - title (str): Overall plot title.
+            - context (None or str): Seaborn .set_theme() parameter. 
+                One of {paper, notebook, talk (default), poster}. If None, set to 'default (notebook)'.
+            - annotate (bool): Whether or not to annotate the bar graph with values. Default is True.
+            - labels (list of strings): Model names for plot labels.
+        Returns:
+            - fig3: Figure of prediction residuals
+
+    """
+    fw_models = predictions[predictions.columns[~predictions.columns.str.contains('Measured')]].columns.to_list()
+    sns.reset_defaults()    
+    %matplotlib inline
+    font_scale=.8 if context=='talk' else 1
+    rc={'lines.markersize': 6} if context=='talk' else None
+    sns.set_theme(context=context, style='ticks', font_scale=font_scale, 
+        rc=rc)
+    if (len(fw_models) == 6) | (len(fw_models) == 3):
+        ncols=3
+        nrows = round((len(fw_models)+2)//3)
+    else:
+        nrows = round((len(fw_models)+3)//4)
+        ncols=4
+    fig3, ax3 = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols*3, nrows*3))
+    ax3 = ax3.flatten() if nrows > 1 else ax3
+    fw_error = pd.DataFrame()
+    fw_error['Measured'] = predictions['Measured'] 
+    for index, model in enumerate(fw_models):
+        # Calculate error
+        fw_error[model] = predictions[model] - predictions['Measured'] 
+        fw_error['Error direction'] = fw_error[model]/abs(fw_error[model])
+
+        # Plot residuals
+        ax3[index].axhline(y=0, alpha=0.9, linewidth=0.5, color='orange')
+        sns.scatterplot(data=fw_error, y=model, 
+            x='Measured', alpha=0.7, style='Error direction', markers={-1: 'v', 1: '^'},
+            hue='Error direction', palette='coolwarm',
+            ax=ax3[index], legend=False)
+        ax3[index].set(title=(labels[index] if labels else fw_models[index]), 
+            ylabel='Error (kg)' if (index % ncols == 0) else None, 
+            xlabel='Measured 1RM' if index >= len(fw_models)-ncols else None)
+    # Make y-axis range the same
+    error_min = fw_error[fw_models].min().min()-5
+    error_max = fw_error[fw_models].max().max()+5
+    ax3 = [ax.set_ylim([error_min, error_max]) for ax in ax3]
+
+    # Calculate remaining evaluation metrics and reshape dataframe for plotting
+    fw_error['Metric'] = 'Error'
+    fw_mae = abs(fw_error.iloc[:,:-1])
+    fw_mae['Metric'] = 'MAE'
+    fw_metrics = pd.concat([fw_error, fw_mae], axis=0).melt(
+        value_vars=fw_models, id_vars=['Metric'], var_name='model')
+    print(f'Metrics dataframe shape (free weight data): {fw_metrics.shape}')
+
+    # Titles and axis labels
+    fig3.suptitle(title+': Model Regression Residuals')
+    fig3.tight_layout(rect=[0, 0, 1, 1])
+    if pickle_name:    
+        path = path + f'/{pickle_name}_'
+        fig3.savefig(f'{path}residuals_plot_{title}.png')
+        print('Figure saved: '+f'{path}residuals_plot_{title}.png')
+    return fig3
