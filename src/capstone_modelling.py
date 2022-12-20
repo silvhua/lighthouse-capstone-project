@@ -379,9 +379,8 @@ def batch_run_cv(model_names, df_dict, estimator, x_columns=['slope', 'intercept
     Parameters:
         - model_names (list): List of model names to iterate over.
         - df_dict (dict): Dictionary of DataFrames containing the data for modelling.
-        - x_columns (list): List of feature names in the dataframes.
         - estimator: Instantiate a regressor, e.g. LinearRegression(). 
-        - x_columns: Feature columns in df.
+        - x_columns (list): List of feature names in the dataframes.
         - cv_folds: Number of cross validation folds.
 
     Returns:

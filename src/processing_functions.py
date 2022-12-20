@@ -3,48 +3,6 @@ from sklearn.linear_model import LinearRegression
 import re
 import scipy.stats as st
 
-def linear_regression2(df, loads):
-    """2022-11-28 18:22
-    Calculate slope and intercept using linear regression, where X = load, y = velocity.
-    Function called by other functions: individual_regression() and reshape_group_df_lr(df).
-    Can be used as a stand-alone function or when called with .apply with transposed DataFrame.
-
-    Parameters:
-        - df: DataFrame with each row containing data for an individual.
-        - loads (list): List of relative loads to be used for calculating LV slope and LV intercept.
-    Returns:
-        Dataframe with the slope and intercept for the linear regression.
-
-    """
-    from sklearn.linear_model import LinearRegression
-
-    # Select columns that contain the numbers in load
-    regex_MV = ''.join([str(load)+r'%.*MV|' for load in loads])
-    regex_load = ''.join([str(load)+r'%1RM|' for load in loads]) 
-    if type(df)==pd.Series:
-        load = df.filter(regex=regex_load[:-1], axis='index').values.reshape(-1,1)
-        velocity = df.filter(regex=regex_MV[:-1], axis='index').values.reshape(-1,1)
-
-        lr = LinearRegression()
-        lr.fit(velocity, load)
-        
-        # LinearRegression attributes are in arrays, so need to access values with indices
-        df['slope'] = lr.coef_[0][0] 
-        df['intercept'] = lr.intercept_[0]
-
-        return df
-    else:
-        load = df.filter(regex=regex_load[:-1]).values.reshape(-1,1)
-        velocity = df.filter(regex=regex_MV[:-1]).values.reshape(-1,1)
-        lr = LinearRegression()
-        lr.fit(velocity, load)
-
-        df_lr = pd.DataFrame()
-        df_lr['slope'] = lr.coef_[0]
-        df_lr['intercept'] = lr.intercept_
-
-        return df_lr
-        
 def linear_regression(df):
     """
     Calculate slope and intercept using linear regression, where X = load, y = velocity.
@@ -90,6 +48,48 @@ def linear_regression(df):
 
         return df_lr
 
+def linear_regression2(df, loads):
+    """2022-11-28 18:22
+    Calculate slope and intercept using linear regression, where X = load, y = velocity.
+    Function called by other functions: individual_regression2() and reshape_group_df_lr(df).
+    Can be used as a stand-alone function or when called with .apply with transposed DataFrame.
+
+    Parameters:
+        - df: DataFrame with each row containing data for an individual.
+        - loads (list): List of relative loads to be used for calculating LV slope and LV intercept.
+    Returns:
+        Dataframe with the slope and intercept for the linear regression.
+
+    """
+    from sklearn.linear_model import LinearRegression
+
+    # Select columns that contain the numbers in load
+    regex_MV = ''.join([str(load)+r'%.*MV|' for load in loads])
+    regex_load = ''.join([str(load)+r'%1RM|' for load in loads]) 
+    if type(df)==pd.Series:
+        load = df.filter(regex=regex_load[:-1], axis='index').values.reshape(-1,1)
+        velocity = df.filter(regex=regex_MV[:-1], axis='index').values.reshape(-1,1)
+
+        lr = LinearRegression()
+        lr.fit(velocity, load)
+        
+        # LinearRegression attributes are in arrays, so need to access values with indices
+        df['slope'] = lr.coef_[0][0] 
+        df['intercept'] = lr.intercept_[0]
+
+        return df
+    else:
+        load = df.filter(regex=regex_load[:-1]).values.reshape(-1,1)
+        velocity = df.filter(regex=regex_MV[:-1]).values.reshape(-1,1)
+        lr = LinearRegression()
+        lr.fit(velocity, load)
+
+        df_lr = pd.DataFrame()
+        df_lr['slope'] = lr.coef_[0]
+        df_lr['intercept'] = lr.intercept_
+
+        return df_lr
+        
 def individual_regression2(df, loads):
     """2022-11-28 20:09
 
@@ -98,7 +98,7 @@ def individual_regression2(df, loads):
     by calling the linear_regression2 function.
 
     Parameters:
-        - df: DataFrame with each row containing data for an individual.
+        - df: DataFrame with each row containing data for a single individual.
         - loads (list): List of relative loads to be used for calculating LV slope and LV intercept.
     Returns:
         Dataframe with new columns added: 
@@ -106,25 +106,6 @@ def individual_regression2(df, loads):
             - 'group MVT': Mean '100%MV' value for the dataset (value identical in each row)
     """
     df_lr = df.transpose().apply(lambda x:linear_regression2(x, loads)).transpose()
-    
-    df_lr['group MVT'] =  df_lr['100%MV'].mean()
-    print('Dataframe shape: ', df_lr.shape)
-    return df_lr
-
-def individual_regression(df):
-    """2022-11-27 20:34
-    Necessary for feature engineering.
-    Calculate slope and intercept for each row of the dataframe (i.e. for each individual participant)
-    by calling the linear_regression function.
-
-    Parameters:
-        df: DataFrame with each row containing data for an individual.
-    Returns:
-        Dataframe with new columns added: 
-            - 'slope' and 'intercept' for the linear regression for each individual row.
-            - 'group MVT': Mean '100%MV' value for the dataset (value identical in each row)
-    """
-    df_lr = df.transpose().apply(lambda x:linear_regression(x)).transpose()
     
     df_lr['group MVT'] =  df_lr['100%MV'].mean()
     print('Dataframe shape: ', df_lr.shape)
@@ -194,6 +175,8 @@ def run_stats(df, columns=['slope', 'intercept', 'Load-1RM-1'], mode=None):
         - columns (list): Column names on which to perform Shapiro-Wilk test
         - mode ('binary' or None): If binary, return 1 if null hypothesis rejected (not normal).
             Default is to return p-value.
+    Returns: Series with results from the Shapiro-Wilk test for normality. 
+        - Default results are the p-value. If mode='binary', values are 0 or 1.
     """
     alpha = 0.05
     statistics = pd.Series(dtype='float64')

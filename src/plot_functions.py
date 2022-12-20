@@ -8,58 +8,6 @@ import numpy as np
 import re
 from processing_functions import *
 
-def reshape_group_df_lr2(df, loads):
-    """2022-11-27 20:39
-    Necessary for data visualization.
-    Reshape dataframe each row represents data from one rep (each participant has multiple columns).
-    Add the estimations from the linear regression.
-
-        Parameters:
-        - df: DataFrame with one row per participant. 
-        - loads (list): List of relative loads to be used for calculating LV slope and LV intercept.
-        Returns:
-        - DataFrame with each row representing a single set (each participant may have multiple rows). 
-        Participants are sorted by strength for compatibility with Seaborn plots.
-    """
-    # Calculate slope and intercept for each row of the dataframe (i.e. for each individual participant)
-    # by calling the linear_regression function.
-    print('Original shape: ',df.shape)
-    df = df.transpose().apply(lambda x:linear_regression2(x, loads)).transpose()
-    
-    velocity_columns = df.columns[df.columns.str.contains('MV')]
-    load_columns = df.columns[df.columns.str.contains('Load')]
-
-    # Use intercept and slope to calculate predicted load
-    for column in velocity_columns:
-        df[re.sub('(\d*%).*','\\1 predicted load', column)] = df['slope'] * df[column] + df['intercept']
-    
-    prediction_columns = df.columns[df.columns.str.contains('predicted load')].to_list()
-
-    # Sort participants by strength
-    df = df.sort_values('Load-1RM-1').reset_index(drop=True)
-    df2 = pd.concat([
-        df.melt(
-            value_vars=load_columns, value_name='absolute load',
-            ignore_index=False
-        ),
-        df.melt(
-            id_vars='Load-1RM-1',
-            value_vars=velocity_columns, var_name='%1RM', value_name='mean velocity',
-            ignore_index=False
-            ),
-    ], axis=1).drop(columns='variable')
-    df3 = df.melt(
-            # id_vars='Load-1RM-1',
-            value_vars=prediction_columns, value_name='predicted load', 
-            ignore_index=False
-            ).reset_index(drop=True).drop(columns='variable')
-    df2['%1RM'] = df2['%1RM'].str.replace('(\d*)\D*','\\1', regex=True).astype(float)
-    df2 = df2.rename({'Load-1RM-1':'1RM'}, axis=1)
-    df2 = df2.reset_index(names='participant')
-    df2 = pd.concat([df2,df3],axis=1)
-    print('New shape: ', df2.shape)
-    return df2
-    
 def reshape_group_df_lr(df):
     """2022-11-27 20:39
     Necessary for data visualization.
@@ -213,21 +161,21 @@ def data_viz(df_fw, df_sm):
     # print(xmin, xmax)
     
     for index, df in enumerate([df_fw, df_sm]):
-        # absolute load
+        # absolute load # plot_functions.py
         sns.lineplot(data=reshape_group_df_lr(df), x='mean velocity', y='absolute load', 
             hue='participant', alpha=.8,marker='.', size=1, ls=':',
             legend=False, ax=ax[0, index]
         ).set_title('Smith machine' if index==1 else 'Free weight')
-        ax[0, index].axvline(x=df_fw['100%MV'].mean(),
+        ax[0, index].axvline(x=df['100%MV'].mean(),
             label='group MVT',ls='--',alpha=.5)
         ax[0, index].set_xlim([xmin,xmax])
 
-        # relative load
+        # relative load 
         sns.lineplot(data=reshape_group_df_lr(df), x='mean velocity', y='%1RM', 
             hue='participant', alpha=.8, marker='.', size=1, ls=':',
             legend=False, ax=ax[1, index]
-        )
-        ax[1, index].axvline(x=df_fw['100%MV'].mean(),
+        )# plot_functions.py
+        ax[1, index].axvline(x=df['100%MV'].mean(),
             label='group MVT',ls='--',alpha=.5)
         ax[1, index].set_xlim([xmin,xmax])
 
@@ -238,6 +186,7 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
     context='talk', annotate=True, ymin=-1.5, ymax=5):
     """2022-11-27 23:00
 
+    Experiment 1
     Plot predictions from all the models for each of the free weight and smith machine data sets.
         Parmaters:
             - fw_predictions, sm_predictions (DataFrame): 
@@ -247,6 +196,7 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
             - context (None or str): Seaborn .set_theme() parameter. 
                 One of {paper, notebook, talk (default), poster}. If None, set to 'default (notebook)'.
             - annotate (bool): Whether or not to annotate the bar graph with values. Default is True.
+            - ymin, ymax: Range of the error bar chart.
         Returns:
             - figure with scatter plots of measured vs. predicted values for all models.
             - figure with bar charts of mean absolute error and mean error for all models.
@@ -276,7 +226,7 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
     fw_error = pd.DataFrame()
     sm_error = pd.DataFrame()
     for index, model in enumerate(fw_models):
-        # Calculate error
+        # Calculate residual error
         fw_error[model] = fw_predictions[model] - fw_predictions['Measured'] 
         sm_error[model] = sm_predictions[model] - sm_predictions['Measured'] 
 
@@ -303,9 +253,9 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
     fig.tight_layout(rect=[0, 0, 1, 0.98])
     fig2.tight_layout(rect=[0, 0, 1, 0.9])
 
-    # Calculate remaining evaluation metrics and reshape dataframe for plotting
+    # Calculate remaining evaluation metrics and reshape that dataframe for plotting
     fw_error['Metric'] = 'Error'
-    fw_mae = abs(fw_error.iloc[:,:-1])
+    fw_mae = abs(fw_error.iloc[:,:-1]) # new dataframe
     fw_mae['Metric'] = 'MAE'
     fw_metrics = pd.concat([fw_error, fw_mae], axis=0).melt(
         value_vars=fw_models, id_vars=['Metric'], var_name='model')
@@ -323,8 +273,6 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
         errorbar=('se', 1.96), # error bars set to 95% confidence interval, or 1.96*standard error
         ax=ax2[0]).set_ylim([ymin, ymax])
     ax2[0].axhline(y=0, ls=':', color='grey')
-    ax2[0].set(ylabel='kg', xlabel=None)
-    ax2[0].set_title('Free weight')
     sns.barplot(data=sm_metrics, y='value', x='model', hue='Metric', 
         errorbar=('se', 1.96),
         ax=ax2[1]).set_ylim([ymin, ymax])    
@@ -337,6 +285,7 @@ def compare_models(fw_predictions, sm_predictions, title='Measured 1RM vs. model
         for i in ax2[1].containers:
                 ax2[1].bar_label(i, fmt='%.1f', label_type='center') 
     # Titles and axis labels
+    ax2[0].set(ylabel='kg', xlabel=None)
     ax2[1].set(ylabel='kg', xlabel=None)
     ax2[0].set_title('Free weight')
     ax2[1].set_title('Smith machine')
@@ -347,6 +296,7 @@ def compare_models2(predictions, title='Measured 1RM vs. model predictions',
     context='talk', annotate=True, ymin=-1.5, ymax=10):
     """2022-12-02 23:53 from `2022-12-02 iteration 4` notebook
 
+    Experiment 2
     Plot predictions from all the models for a dataset.
         Parameters:
             - predictions (DataFrame): 
@@ -360,7 +310,7 @@ def compare_models2(predictions, title='Measured 1RM vs. model predictions',
             - figure with scatter plots of measured vs. predicted values for all models.
             - figure with bar charts of mean absolute error and mean error for all models.
             - DataFrame containing:
-                mean absolute error and mean error for all models.
+                mean absolute error and mean residual error for all models.
 
     Command syntax:
         scatterplot, error_plot, metrics = compare_models2(predictions, 

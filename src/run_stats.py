@@ -40,3 +40,22 @@ def compare_means(d1, d2, type='paired'):
     # calculate the effect size
     stats['Cohens d'] = round(((u2 - u1) / s), 2)
     return stats
+
+def batch_compare_means(predictions, target='Measured', filename=None,
+    path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output\model metrics\Experiment 1'):
+    """
+    Perform paired t-tests and calculate Cohen's d effect sizes between the predicted and true values.
+
+    Parameters:
+        - predictions: DataFrame containing the predicted values and true values.
+        - target (str): Column name containing the target values.
+        - filename (str): Root of filename for saving results. If None, results are not automatically saved.
+        - path (raw string): Filepath for saving the csv file.
+    """
+    models = predictions[predictions.columns[~predictions.columns.str.contains('Measured')]].columns.to_list()
+    statistics = pd.DataFrame()
+    for model in models:
+        statistics[model] = compare_means(predictions[target], predictions[model], type='paired')
+    if filename:
+        save_csv(statistics, filename, path)
+    return statistics

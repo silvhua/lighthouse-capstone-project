@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 def plot_cv_metrics(mae_df, r2_df, color='silver', context='talk', ymin=None, ymax=1.1):
     """
@@ -36,8 +37,7 @@ def plot_cv_metrics(mae_df, r2_df, color='silver', context='talk', ymin=None, ym
 def plot_residuals2(predictions, title='Squat', 
     context='talk', annotate=True, ymin=-1.5, ymax=8, labels=None, pickle_name=None,
     path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output\figures'):
-    """2022-12-03 10:35 Mainly for presentation to keep it brief
-
+    """
     Plot residuals from all the models for a dataset.
         Parameters:
             - predictions (DataFrame): 
@@ -47,14 +47,15 @@ def plot_residuals2(predictions, title='Squat',
             - context (None or str): Seaborn .set_theme() parameter. 
                 One of {paper, notebook, talk (default), poster}. If None, set to 'default (notebook)'.
             - annotate (bool): Whether or not to annotate the bar graph with values. Default is True.
-            - labels (list of strings): Model names for plot labels.
+            - labels (list of strings): Model names for plot labels. 
+                If None, labels will be from column names.
         Returns:
-            - fig3: Figure of prediction residuals
+            - Figure of prediction residuals
 
     """
     fw_models = predictions[predictions.columns[~predictions.columns.str.contains('Measured')]].columns.to_list()
-    sns.reset_defaults()    
-    %matplotlib inline
+    # sns.reset_defaults()    
+    # %matplotlib inline
     font_scale=.8 if context=='talk' else 1
     rc={'lines.markersize': 6} if context=='talk' else None
     sns.set_theme(context=context, style='ticks', font_scale=font_scale, 
@@ -70,9 +71,9 @@ def plot_residuals2(predictions, title='Squat',
     fw_error = pd.DataFrame()
     fw_error['Measured'] = predictions['Measured'] 
     for index, model in enumerate(fw_models):
-        # Calculate error
+        # Calculate residual error
         fw_error[model] = predictions[model] - predictions['Measured'] 
-        fw_error['Error direction'] = fw_error[model]/abs(fw_error[model])
+        fw_error['Error direction'] = fw_error[model]/abs(fw_error[model]) # -1 or +1
 
         # Plot residuals
         ax3[index].axhline(y=0, alpha=0.9, linewidth=0.5, color='orange')
@@ -87,14 +88,6 @@ def plot_residuals2(predictions, title='Squat',
     error_min = fw_error[fw_models].min().min()-5
     error_max = fw_error[fw_models].max().max()+5
     ax3 = [ax.set_ylim([error_min, error_max]) for ax in ax3]
-
-    # Calculate remaining evaluation metrics and reshape dataframe for plotting
-    fw_error['Metric'] = 'Error'
-    fw_mae = abs(fw_error.iloc[:,:-1])
-    fw_mae['Metric'] = 'MAE'
-    fw_metrics = pd.concat([fw_error, fw_mae], axis=0).melt(
-        value_vars=fw_models, id_vars=['Metric'], var_name='model')
-    print(f'Metrics dataframe shape (free weight data): {fw_metrics.shape}')
 
     # Titles and axis labels
     fig3.suptitle(title+': Model Regression Residuals')
