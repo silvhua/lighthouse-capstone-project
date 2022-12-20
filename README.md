@@ -357,6 +357,8 @@ Using FW squat data, models were evaluated with the coefficient of determination
 <details>
 <summary>Expand for Random Forest Regression residuals plots</summary>
 
+*Results are from Random Forest Regression without hyperparameter tuning*
+
 ![residuals from random forest](./output/figures/randomforest/RandomForest_residualsFW_.png_residuals_plot_Random%20Forest.png)
 
 </details>
