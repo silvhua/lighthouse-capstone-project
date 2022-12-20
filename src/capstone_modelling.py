@@ -238,7 +238,7 @@ def run_all_models(stat_models_dict, ml_models_dict, df, x_columns=['slope', 'in
     path=r'C:\Users\silvh\OneDrive\lighthouse\projects\lighthouse-capstone-project\output'):
     """2022-12-02 23:59 See `2022-12-02 iteration 4` notebook
 
-    Run models 1-4 for single dataframe.
+    Run models 1-4 for single dataframe/dataset.
     """
     # Initialize dataframes for storing model outputs
     predictions = pd.DataFrame()
@@ -257,7 +257,7 @@ def run_all_models(stat_models_dict, ml_models_dict, df, x_columns=['slope', 'in
         )
         # cross-validation metrics
         cv_metrics[model] = evaluate_with_cv(df, x_columns, 
-            model=model_instance, model_name=model)
+            model=model_instance)
 
         # ttest and Cohen's d effect size
         stats[model] = compare_means(
@@ -288,6 +288,7 @@ def batch_model(model_names, df_dict, estimator=None, x_columns=['slope', 'inter
     Parameters:
         - model_names (list): List of model names to iterate over.
         - df_dict (dict): Dictionary of DataFrames containing the data for modelling.
+        - estimator: Instance of an estimator. If None, LinearRegression() is used.
         - x_columns (list): List of feature names in the dataframes.
         - pickle_name (str): Root of filename for saving results. If None, results are not automatically saved.
 
@@ -323,22 +324,22 @@ def batch_model(model_names, df_dict, estimator=None, x_columns=['slope', 'inter
             predictions[model] = model_dict[model].predict(df_dict[model][x_columns])
         # cross-validation metrics
         cv_metrics[model] = evaluate_with_cv(df_dict[model], x_columns, 
-            model=model_dict[model], model_name=model)
+            model=model_dict[model])
 
         # ttest and Cohen's d effect size
         stats[model] = compare_means(
                 df_dict[model]['Load-1RM-1'], # True y value
                 predictions[model], type='paired') # Model predicts
-
-        # Concatenate
-        metrics = pd.concat([cv_metrics, 
-            stats, 
-            coefficients
-            ], axis=0)
-        metrics = round(metrics, 4)
         # pickle the model
         if pickle_name:
             savepickle(model_dict[model], f'{pickle_name} {model}', path=path+'\models')
+
+    # Concatenate
+    metrics = pd.concat([cv_metrics, 
+        stats, 
+        coefficients
+        ], axis=0)
+    metrics = round(metrics, 4)
         
     # save predictions and metrics
     if pickle_name:
@@ -393,15 +394,19 @@ def batch_run_cv(model_names, df_dict, estimator, x_columns=['slope', 'intercept
         cv_mae[model], cv_r2[model] = cv_mae_r2(df_dict[model], estimator, x_columns, cv_folds)
     return cv_mae, cv_r2
 
-def evaluate_with_cv(df, x_columns, model, model_name='regressor'):
+def evaluate_with_cv(df, x_columns, model):
     """
-    Model, fit, and evaluate machine learning model compared with statistical linear regression.
-
+    Evaluate machine learning model using 10-fold cross validation.
+    Parameters:
+        - df: Dataframe containing the data set.
+        - x_columns (list): Feature names.
+        - model: Instance of the model.
+    Returns:
+        Dictionary containing MAE and R^2 score.
     """
 
     X = df[x_columns]
     y = df['Load-1RM-1']
-    y_pred_stat = df['slope'] * df['100%MV'] + df['intercept']
     cv_results = cross_validate(model, X, y, cv=10,
         scoring=['r2', 'neg_mean_absolute_error']
         )
