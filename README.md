@@ -354,8 +354,13 @@ Using FW squat data, models were evaluated with the coefficient of determination
 *Random Forest Regression (`n_estimators`=20, `max_depth`=7)* 
 <img src="./output/figures/randomforest/05 iteration CV metrics RandomForest maxdepth_7 n_estimators20.png"> 
 
+<details>
+<summary>Expand for Random Forest Regression residuals plots</summary>
 
+![residuals from random forest](./output/figures/randomforest/RandomForest_residualsFW_.png_residuals_plot_Random%20Forest.png)
 
+</details>
+<br>
 
 
 
