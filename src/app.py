@@ -6,11 +6,12 @@ import plotly.graph_objects as go
 
 # App link: https://silvhua-lighthouse-capstone-project-srcapp-wafhso.streamlit.app/
 st.title('1RM Estimator')
-st.markdown('### Use your load-velocity profile to estimate your back squat 1RM')
+st.markdown('### Use your load-velocity profile to estimate your back squat 1RM using machine learning')
 st.markdown('')
 st.markdown('#### Please enter data for at least two different loads (see left sidebar).')
 st.markdown('')
 st.markdown('Created by [Silvia Hua](https://www.linkedin.com/in/silviahua/)')
+st.markdown('\nOrdinary least squares linear regression was used to train the machine learning models used for 1RM estimation.')
 st.markdown('Project details found on [Github](https://github.com/silvhua/lighthouse-capstone-project)')
 
 def app_linear_regression(loads, velocities):
