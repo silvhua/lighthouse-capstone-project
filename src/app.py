@@ -12,6 +12,7 @@ st.markdown('#### Please enter data for at least two different loads (see left s
 st.markdown('')
 st.markdown('Created by [Silvia Hua](https://www.linkedin.com/in/silviahua/)')
 st.markdown('\nOrdinary least squares linear regression was used to train the machine learning models used for 1RM estimation.')
+st.markdown('View the 5-minute presentation about this project [here](https://youtu.be/D7LPYTePY6k)')
 st.markdown('Project details found on [Github](https://github.com/silvhua/lighthouse-capstone-project)')
 
 def app_linear_regression(loads, velocities):
@@ -85,7 +86,7 @@ n_data_points = min(len(loads), len(velocities))
 loads = loads[:n_data_points]
 velocities = velocities[:n_data_points]
 
-st.write(f'Loads entered: {loads}')
+st.write(f'\nLoads entered: {loads}')
 st.write(f'Velocities entered: {velocities}')
 
 if (len(loads) > 1) & (len(velocities) == len(loads)):
